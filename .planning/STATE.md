@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Roadmap 已创建，待规划 Phase 1
+last_updated: "2026-07-14T12:48:30.369Z"
+progress:
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
+---
+
 # Project State
 
 **Project:** 二次元个人网站（工具库 + 追番记录）
@@ -28,6 +42,7 @@
 ## Accumulated Context
 
 ### Key Decisions
+
 - 采用 Astro + Tailwind CSS 静态站，改文件 + git 自动部署（无后台/无数据库）
 - Tailwind v4 经 `@tailwindcss/vite`（CSS-first），不用弃用的 `@astrojs/tailwind`
 - 内容用 Content Layer API（`content.config.ts` + glob loader + Zod）
@@ -36,18 +51,21 @@
 - 工具库优先级高于追番（核心价值）
 
 ### Todos
+
 - 待 `/gsd:plan-phase 1` 分解 Phase 1
 
 ### Blockers
+
 - None
 
 ### Open Questions
+
 - Bangumi API 具体字段（collection.status 枚举 / rating 结构）在未来集成阶段二次核对
 - 内容规模拐点（何时上 Pagefind 全文搜索）待实际增长评估
 
 ## Session Continuity
 
-**Last session:** 2026-07-14 — 初始化项目并创建 roadmap（3 阶段，17/17 需求覆盖）
+**Last session:** 2026-07-14T12:48:30.357Z
 
 **Next action:** `/gsd:plan-phase 1` — 规划「站点地基与二次元外壳」
 
