@@ -1,59 +1,70 @@
 ---
 import { Icon } from 'astro-icon/components';
 
-// 整卡入口：整张卡是单个 <a>（可点区=整卡）。内部相对链接无需 rel。
-// hover 上浮用 motion-safe:（编译为 prefers-reduced-motion: no-preference guard），reduced-motion 下自动静止。
+// 整卡入口改造：外层 <article.relative> + 内层整卡 <a href=详情> + 绝对定位外 <a href=外部 target=_blank>。
+// 零 JS：外链按钮是独立 <a>、在整卡 <a> 外层兄弟位置，无嵌套，原生行为即可（满足 D-04）。
 interface Props {
-  href: string;
+  href: string;          // 详情页路径（page 层组合 /tools/${slugOf(title)}）
   title: string;
   description: string;
   icon: string;
   emphasis?: boolean;
   badge?: string;
+  externalUrl?: string;  // 外链地址（真时渲染独立外链按钮）
 }
-const { href, title, description, icon, emphasis = false, badge } = Astro.props;
+const { href, title, description, icon, emphasis = false, badge, externalUrl } = Astro.props;
 ---
 
-<a
-  href={href}
+<article
   class:list={[
-    'group flex items-start gap-4 rounded-[var(--radius-xl)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] transition-transform duration-150 motion-safe:hover:-translate-y-0.5',
-    emphasis
-      ? 'border-2 border-[var(--color-primary)]'
-      : 'border border-[var(--color-border)]',
+    'group relative rounded-[var(--radius-xl)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] transition-transform duration-150 motion-safe:hover:-translate-y-0.5',
+    emphasis ? 'border-2 border-[var(--color-primary)]' : 'border border-[var(--color-border)]',
   ]}
 >
-  <span
-    class="grid size-12 shrink-0 place-items-center rounded-[var(--radius-full)]"
-    style={`background: color-mix(in oklab, var(--color-primary) ${emphasis ? 18 : 12}%, transparent);`}
-  >
-    <Icon name={icon} class="size-6 text-[var(--color-primary)]" aria-hidden="true" />
-  </span>
-
-  <span class="min-w-0 flex-1">
-    <span class="flex items-center justify-between gap-2">
-      <span class="flex min-w-0 items-center gap-2">
-        <span
-          class="font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--color-text)]"
-          >{title}</span
-        >
-        {
-          badge && (
-            <span
-              class="shrink-0 rounded-[var(--radius-full)] px-2 py-0.5 text-xs font-semibold text-[var(--color-primary)]"
-              style="background: color-mix(in oklab, var(--color-primary) 12%, transparent);"
-            >
-              {badge}
-            </span>
-          )
-        }
-      </span>
-      <Icon
-        name="ph:arrow-right"
-        class="size-5 shrink-0 text-[var(--color-text-muted)] transition-transform duration-150 motion-safe:group-hover:translate-x-1"
-        aria-hidden="true"
-      />
+  <a href={href} class="flex items-start gap-4 p-6 pr-10">
+    <span
+      class="grid size-12 shrink-0 place-items-center rounded-[var(--radius-full)]"
+      style={`background: color-mix(in oklab, var(--color-primary) ${emphasis ? 18 : 12}%, transparent);`}
+    >
+      <Icon name={icon} class="size-6 text-[var(--color-primary)]" aria-hidden="true" />
     </span>
-    <span class="mt-2 block text-[var(--color-text-muted)]">{description}</span>
-  </span>
-</a>
+
+    <span class="min-w-0 flex-1">
+      <span class="flex items-center justify-between gap-2">
+        <span class="flex min-w-0 items-center gap-2">
+          <span class="font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+            {title}
+          </span>
+          {
+            badge && (
+              <span
+                class="shrink-0 rounded-[var(--radius-full)] px-2 py-0.5 text-xs font-semibold text-[var(--color-primary)]"
+                style="background: color-mix(in oklab, var(--color-primary) 12%, transparent);"
+              >
+                {badge}
+              </span>
+            )
+          }
+        </span>
+        <Icon
+          name="ph:arrow-right"
+          class="size-5 shrink-0 text-[var(--color-text-muted)] transition-transform duration-150 motion-safe:group-hover:translate-x-1"
+          aria-hidden="true"
+        />
+      </span>
+      <span class="mt-2 block text-[var(--color-text-muted)]">{description}</span>
+    </span>
+  </a>
+
+  {externalUrl && (
+    <a
+      href={externalUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${title} 外链`}
+      class="absolute right-3 top-3 inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+    >
+      <Icon name="ph:arrow-square-out" class="size-5" aria-hidden="true" />
+    </a>
+  )}
+</article>
