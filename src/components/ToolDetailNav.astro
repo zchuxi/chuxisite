@@ -1,0 +1,50 @@
+---
+import Divider from './deco/Divider.astro';
+import EntryCard from './EntryCard.astro';
+
+// 详情页底部 nav：「← 返回工具库」+ 同分类其他工具卡片。
+// related 为空时整区 hidden（D-11）。
+interface Props {
+  backHref?: string;
+  backLabel?: string;
+  related?: {
+    href: string;
+    title: string;
+    description: string;
+    icon: string;
+    externalUrl?: string;
+  }[];
+}
+const { backHref = '/tools', backLabel = '← 返回工具库', related = [] } = Astro.props;
+const showRelated = related.length > 0;
+---
+
+<footer class="mt-16">
+  <Divider class="mb-8 h-6 w-full text-[var(--color-border)]" />
+
+  <a
+    href={backHref}
+    class="inline-flex min-h-11 items-center text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-1"
+  >
+    {backLabel}
+  </a>
+
+  {showRelated && (
+    <section class="mt-8">
+      <h2 class="mb-6 font-[family-name:var(--font-display)] text-lg font-semibold text-[var(--color-text)]">
+        同分类的其他工具
+      </h2>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {related.map((tool) => (
+          <EntryCard
+            href={tool.href}
+            title={tool.title}
+            description={tool.description}
+            icon={tool.icon}
+            externalUrl={tool.externalUrl}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+</footer>
