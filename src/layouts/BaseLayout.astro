@@ -4,10 +4,14 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   fullTitle?: string;
+  description?: string;
+  ogImage?: string;
 }
-const { title, fullTitle: fullTitleProp } = Astro.props;
-// D-02 SEO title 模式；首页用 fullTitle 直接覆盖（站名在前，避免生硬后缀）。完整 SEO/OG 块由 01-03 追加。
+const { title, fullTitle: fullTitleProp, description, ogImage } = Astro.props;
+// D-02 SEO title 模式；首页用 fullTitle 直接覆盖（站名在前，避免生硬后缀）。
 const fullTitle = fullTitleProp ?? (title ? `${title} · 初曦的窝` : '初曦的窝');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = new URL(ogImage ?? '/og-default.png', Astro.site);
 ---
 
 <!doctype html>
@@ -24,6 +28,18 @@ const fullTitle = fullTitleProp ?? (title ? `${title} · 初曦的窝` : '初曦
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{fullTitle}</title>
+    {/* 全站 SEO/OG/canonical（INFRA-06）。保留防 FOUC 脚本与字体 preload 在前 */}
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical.href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={og.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={og.href} />
   </head>
   <body class="min-h-screen">
     <slot />
