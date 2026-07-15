@@ -10,7 +10,10 @@ const tools = defineCollection({
       title: z.string(),
       url: z.string().url(),
       summary: z.string(),
-      tags: z.array(z.string()).default([]),
+      tags: z
+        .array(z.string().transform((s) => s.trim().toLowerCase()))
+        .transform((arr) => [...new Set(arr)])
+        .default([]),
       category: z.string(),
       cover: image().optional(),
       draft: z.boolean().default(false),
