@@ -1,0 +1,15 @@
+---
+import Divider from './deco/Divider.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 bg-[var(--color-surface)]">
+  <Divider class="h-6 w-full text-[var(--color-border)]" />
+  <div
+    class="mx-auto max-w-[72rem] px-4 pb-10 pt-4 text-center text-sm text-[var(--color-text-muted)] md:px-6"
+  >
+    <p>把喜欢的工具和番剧，慢慢收进这个小窝 ♡</p>
+    <p class="mt-1">© {year} 初曦的窝 · 工具、番剧、和一点点生活</p>
+  </div>
+</footer>

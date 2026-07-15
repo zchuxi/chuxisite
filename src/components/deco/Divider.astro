@@ -1,0 +1,26 @@
+---
+// 手绘波浪分隔线。aria-hidden；用作 Footer 顶部软萌分隔。
+// stroke=currentColor（父级上色），preserveAspectRatio=none 让波浪随宽度铺满。
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 1200 24"
+  fill="none"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M0 12c50-11 100-11 150 0s100 11 150 0 100-11 150 0 100 11 150 0 100-11 150 0 100 11 150 0 100-11 150 0 100 11 150 0"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  ></path>
+</svg>

@@ -1,0 +1,20 @@
+---
+// 圆润爱心装饰。aria-hidden + currentColor（父级用 text-[var(--color-deco-pink)] 上色）。
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M12 21s-8.5-6.1-8.5-12A5 5 0 0 1 12 6.6 5 5 0 0 1 20.5 9c0 5.9-8.5 12-8.5 12Z"
+  ></path>
+</svg>

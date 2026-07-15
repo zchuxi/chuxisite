@@ -1,0 +1,48 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import Star from './deco/Star.astro';
+
+// 当前路径判定导航激活态（/tools、/anime 及其子路由高亮）。
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href + '/');
+
+const navLinks = [
+  { href: '/tools', label: '工具库' },
+  { href: '/anime', label: '追番' },
+];
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-[var(--color-border)] backdrop-blur"
+  style="background-color: color-mix(in oklab, var(--color-surface) 82%, transparent);"
+>
+  <div class="mx-auto flex max-w-[72rem] items-center justify-between gap-4 px-4 md:px-6">
+    <a
+      href="/"
+      class="inline-flex min-h-11 items-center gap-1 font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]"
+    >
+      初曦的窝
+      <Star class="size-4 text-[var(--color-deco-pink)]" />
+    </a>
+
+    <nav class="flex items-center gap-1 md:gap-2" aria-label="主导航">
+      {
+        navLinks.map(({ href, label }) => (
+          <a
+            href={href}
+            aria-current={isActive(href) ? 'page' : undefined}
+            class:list={[
+              'inline-flex min-h-11 items-center rounded-[var(--radius-sm)] px-3 text-sm font-semibold transition-colors',
+              isActive(href)
+                ? 'text-[var(--color-primary)] underline decoration-2 underline-offset-8'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]',
+            ]}
+          >
+            {label}
+          </a>
+        ))
+      }
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>
