@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import EntryCard from '../../../../components/EntryCard.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import EmptyState from '../../../../components/EmptyState.astro';
+import PillRow from '../../../../components/PillRow.astro';
+import { getAllTools, slugOf } from '../../../../lib/tools';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tools = await getAllTools();
+  const cats = [...new Set(tools.map((t) => t.data.category))];
+  return cats.map((category) => ({
+    params: { category },
+    props: { items: tools.filter((t) => t.data.category === category), category, totalCategories: cats },
+  }));
+}
+
+const { items, category, totalCategories } = Astro.props as { items: CollectionEntry<'tools'>[]; category: string; totalCategories: string[] };
+---
+
+<BaseLayout title={`分类：${category}`} description={`分类「${category}」下的全部工具`}>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <Breadcrumb
+      items={[
+        { href: '/', label: '首页' },
+        { href: '/tools', label: '工具库' },
+        { label: `分类：${category}` },
+      ]}
+    />
+
+    <PillRow
+      class="mt-8"
+      pills={[
+        { href: '/tools', label: '全部工具', active: false },
+        ...totalCategories.map((c) => ({ href: `/tools/category/${c}`, label: c, active: c === category })),
+      ]}
+    />
+
+    <h1 class="mt-8 font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+      分类：{category}
+    </h1>
+    <p class="mt-2 text-sm text-[var(--color-text-muted)]">（{items.length} 个工具）</p>
+
+    {items.length === 0 ? (
+      <EmptyState
+        heading="这个分类还没住进任何工具 (｡•́︿•̀｡)"
+        ctaHref="/tools"
+        ctaLabel="返回工具库"
+      />
+    ) : (
+      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {items.map((t) => (
+          <EntryCard
+            href={`/tools/${slugOf(t.data.title)}`}
+            externalUrl={t.data.url}
+            icon="ph:wrench"
+            title={t.data.title}
+            description={t.data.summary}
+          />
+        ))}
+      </section>
+    )}
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>

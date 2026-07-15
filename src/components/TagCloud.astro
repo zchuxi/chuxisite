@@ -2,11 +2,12 @@
 // 标签云 chip：松散 wrap、aria-current=page 激活态、# 前缀 aria-hidden、命中区 >=32px，可选 count 括号显示。
 interface Props {
   tags: { href: string; label: string; count?: number; active?: boolean }[];
+  class?: string;
 }
-const { tags } = Astro.props;
+const { tags, class: className } = Astro.props;
 ---
 
-<nav aria-label="标签">
+<nav aria-label="标签" class={className}>
   <ul class="flex flex-wrap items-center gap-2">
     {tags.map((tag) => (
       <li>

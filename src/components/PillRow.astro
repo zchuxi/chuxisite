@@ -3,11 +3,12 @@
 interface Props {
   pills: { href: string; label: string; active?: boolean }[];
   scrollable?: boolean;
+  class?: string;
 }
-const { pills, scrollable = true } = Astro.props;
+const { pills, scrollable = true, class: className } = Astro.props;
 ---
 
-<nav aria-label="分类" class={scrollable ? 'overflow-x-auto pb-1' : undefined}>
+<nav aria-label="分类" class={[scrollable ? 'overflow-x-auto pb-1' : undefined, className].filter(Boolean).join(' ')}>
   <ul class="flex items-center gap-2">
     {pills.map((pill) => (
       <li class="shrink-0">

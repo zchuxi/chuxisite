@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import TagCloud from '../../../components/TagCloud.astro';
+import ToolDetailNav from '../../../components/ToolDetailNav.astro';
+import { Icon } from 'astro-icon/components';
+import { render } from 'astro:content';
+import { getAllTools, getRelated, slugOf } from '../../../lib/tools';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tools = await getAllTools();
+  const slugs = tools.map((t) => slugOf(t.data.title));
+  if (new Set(slugs).size !== slugs.length) {
+    const dupes = slugs.filter((s, i) => slugs.indexOf(s) !== i);
+    throw new Error(`[tools] duplicate slug: ${[...new Set(dupes)].join(', ')}`);
+  }
+  return tools.map((t) => ({
+    params: { slug: slugOf(t.data.title) },
+    props: { entry: t },
+  }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'tools'> };
+const { Content } = await render(entry);
+const { title, url, summary, tags, category } = entry.data;
+const related = await getRelated(category, slugOf(title), 2);
+---
+
+<BaseLayout title={`${title} · 工具库`} description={summary}>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <Breadcrumb
+      items={[
+        { href: '/', label: '首页' },
+        { href: '/tools', label: '工具库' },
+        { label: title },
+      ]}
+    />
+
+    <header class="mt-8 flex flex-wrap items-start justify-between gap-4">
+      <div class="min-w-0 flex-1">
+        <h1 class="font-[family-name:var(--font-display)] text-[28px] font-semibold text-[var(--color-text)]">
+          {title}
+        </h1>
+        <p class="mt-3 text-[var(--color-text-muted)]">{summary}</p>
+        <p class="mt-4 text-sm text-[var(--color-text-muted)]">分类：{category}</p>
+        {tags.length > 0 && (
+          <div class="mt-4">
+            <TagCloud tags={tags.map((ta) => ({ href: `/tools/tag/${ta}`, label: ta }))} />
+          </div>
+        )}
+      </div>
+
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${title} 外链`}
+        class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+      >
+        <Icon name="ph:arrow-square-out" class="size-5" aria-hidden="true" />
+      </a>
+    </header>
+
+    <article class="prose mt-12">
+      <Content />
+    </article>
+
+    <ToolDetailNav
+      backHref="/tools"
+      backLabel="← 返回工具库"
+      related={related.map((t) => ({
+        href: `/tools/${slugOf(t.data.title)}`,
+        title: t.data.title,
+        description: t.data.summary,
+        icon: 'ph:wrench',
+        externalUrl: t.data.url,
+      }))}
+    />
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,22 +1,60 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Divider from '../../components/deco/Divider.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import EntryCard from '../../components/EntryCard.astro';
+import PillRow from '../../components/PillRow.astro';
+import TagCloud from '../../components/TagCloud.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { getAllTools, slugOf } from '../../lib/tools';
+
+const tools = await getAllTools();
+const categories = [...new Set(tools.map((t) => t.data.category))];
+const tagCounts = new Map<string, number>();
+for (const t of tools)
+  for (const tag of t.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+const tags = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .map(([tag]) => tag);
 ---
 
 <BaseLayout title="工具库" description="我收藏与折腾过的好用软件 / 网站，分类整理、图文记录">
-  <main class="mx-auto flex min-h-[60vh] max-w-[72rem] flex-col items-center justify-center px-4 py-24 text-center">
-    <Divider class="mb-8 w-24 text-[var(--color-deco-pink)]" aria-hidden="true" />
-    <h1 class="font-display text-2xl font-semibold text-[var(--color-text)]">
-      这里还空空如也～ (｡･ω･｡)
-    </h1>
-    <p class="mt-4 max-w-md text-[var(--color-text-muted)]">
-      内容正在慢慢整理中，很快就会上线。先去逛逛其他角落吧！
-    </p>
-    <a
-      href="/"
-      class="mt-8 inline-flex items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 py-2.5 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
-    >
-      回到首页
-    </a>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <p class="text-sm text-[var(--color-text-muted)]">共 {tools.length} 件工具 · 慢慢整理中～</p>
+
+    {tools.length > 0 && (
+      <PillRow
+        class="mt-8"
+        pills={[
+          { href: '/tools', label: '全部工具', active: true },
+          ...categories.map((c) => ({ href: `/tools/category/${c}`, label: c, active: false })),
+        ]}
+      />
+    )}
+
+    <TagCloud
+      class="mt-12"
+      tags={tags.map((ta) => ({ href: `/tools/tag/${ta}`, label: ta, count: tagCounts.get(ta), active: false }))}
+    />
+
+    {tools.length === 0 ? (
+      <EmptyState heading="这里还空空如也～" body="还没有收录任何工具，先去逛逛其他角落吧！" ctaHref="/" ctaLabel="回到首页" />
+    ) : (
+      <section class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {tools.map((t) => (
+          <EntryCard
+            href={`/tools/${slugOf(t.data.title)}`}
+            externalUrl={t.data.url}
+            icon="ph:wrench"
+            title={t.data.title}
+            description={t.data.summary}
+          />
+        ))}
+      </section>
+    )}
   </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
 </BaseLayout>

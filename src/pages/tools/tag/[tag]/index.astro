@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import EntryCard from '../../../../components/EntryCard.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import EmptyState from '../../../../components/EmptyState.astro';
+import TagCloud from '../../../../components/TagCloud.astro';
+import { getAllTools, slugOf } from '../../../../lib/tools';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tools = await getAllTools();
+  const tagMap = new Map();
+  for (const t of tools)
+    for (const tag of t.data.tags) {
+      const list = tagMap.get(tag) ?? [];
+      list.push(t);
+      tagMap.set(tag, list);
+    }
+  return [...tagMap.entries()].map(([tag, items]) => ({
+    params: { tag },
+    props: { items, tag },
+  }));
+}
+
+const { items, tag } = Astro.props as { items: CollectionEntry<'tools'>[]; tag: string };
+
+const tools = await getAllTools();
+const tagCounts = new Map();
+for (const t of tools)
+  for (const tg of t.data.tags) tagCounts.set(tg, (tagCounts.get(tg) ?? 0) + 1);
+const tags = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .map(([ta]) => ta);
+---
+
+<BaseLayout title={`标签：${tag}`} description={`打过「${tag}」标签的全部工具`}>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <Breadcrumb
+      items={[
+        { href: '/', label: '首页' },
+        { href: '/tools', label: '工具库' },
+        { label: `标签：${tag}` },
+      ]}
+    />
+
+    <TagCloud
+      class="mt-8"
+      tags={tags.map((ta) => ({
+        href: `/tools/tag/${ta}`,
+        label: ta,
+        count: tagCounts.get(ta),
+        active: ta === tag,
+      }))}
+    />
+
+    <h1 class="mt-8 font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+      标签：{tag}
+    </h1>
+    <p class="mt-2 text-sm text-[var(--color-text-muted)]">（{items.length} 个工具）</p>
+
+    {items.length === 0 ? (
+      <EmptyState
+        heading="还没有工具打过这个标签～"
+        ctaHref="/tools"
+        ctaLabel="返回工具库"
+      />
+    ) : (
+      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {items.map((t) => (
+          <EntryCard
+            href={`/tools/${slugOf(t.data.title)}`}
+            externalUrl={t.data.url}
+            icon="ph:wrench"
+            title={t.data.title}
+            description={t.data.summary}
+          />
+        ))}
+      </section>
+    )}
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
