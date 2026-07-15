@@ -1,0 +1,29 @@
+---
+// 分类 pill 行：横向、移动端可横滚，aria-current=page 激活态，命中区 >=44px。
+interface Props {
+  pills: { href: string; label: string; active?: boolean }[];
+  scrollable?: boolean;
+}
+const { pills, scrollable = true } = Astro.props;
+---
+
+<nav aria-label="分类" class={scrollable ? 'overflow-x-auto pb-1' : undefined}>
+  <ul class="flex items-center gap-2">
+    {pills.map((pill) => (
+      <li class="shrink-0">
+        <a
+          href={pill.href}
+          aria-current={pill.active ? 'page' : undefined}
+          class:list={[
+            'inline-flex min-h-11 items-center rounded-[var(--radius-full)] px-4 text-sm font-semibold transition-colors',
+            pill.active
+              ? 'bg-[var(--color-primary)] text-[var(--color-primary-fg)]'
+              : 'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)]',
+          ]}
+        >
+          {pill.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

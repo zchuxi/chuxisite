@@ -1,0 +1,30 @@
+---
+// 标签云 chip：松散 wrap、aria-current=page 激活态、# 前缀 aria-hidden、命中区 >=32px，可选 count 括号显示。
+interface Props {
+  tags: { href: string; label: string; count?: number; active?: boolean }[];
+}
+const { tags } = Astro.props;
+---
+
+<nav aria-label="标签">
+  <ul class="flex flex-wrap items-center gap-2">
+    {tags.map((tag) => (
+      <li>
+        <a
+          href={tag.href}
+          aria-current={tag.active ? 'page' : undefined}
+          class:list={[
+            'inline-flex min-h-[32px] items-center gap-1 rounded-[var(--radius-full)] px-3 text-sm transition-colors',
+            tag.active
+              ? 'bg-[var(--color-primary)] font-semibold text-[var(--color-primary-fg)]'
+              : 'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:text-[var(--color-primary)]',
+          ]}
+        >
+          <span aria-hidden="true">#</span>
+          <span>{tag.label}</span>
+          {tag.count != null && <span class="text-xs opacity-70">({tag.count})</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
