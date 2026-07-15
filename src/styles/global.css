@@ -1,6 +1,15 @@
 @import "tailwindcss";
-/* Fredoka 可变字体（Latin，自托管 woff2）；ZCOOL KuaiLe 子集化延后到 01-02，CJK 先回退系统栈 */
+/* Fredoka 可变字体（Latin，自托管 woff2）；CJK 标题走 ZCOOL KuaiLe 手工子集（下方 @font-face） */
 @import "@fontsource-variable/fredoka/index.css";
+
+/* ZCOOL KuaiLe 站点用字子集（pyftsubset 合并命中切片，仅标题字符 ~4KB，满足 P5 无 >1MB 请求）。
+   font-display 令牌顺序 Fredoka→ZCOOL：拉丁由 Fredoka 渲染，CJK 落到本子集，缺字回退系统栈。 */
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("/fonts/zcool-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
 
 /* class 策略暗色变体，配合 <head> 内联脚本，非 media（P3） */
 @custom-variant dark (&:where(.dark, .dark *));
