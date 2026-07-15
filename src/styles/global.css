@@ -1,1 +1,69 @@
 @import "tailwindcss";
+/* Fredoka 可变字体（Latin，自托管 woff2）；ZCOOL KuaiLe 子集化延后到 01-02，CJK 先回退系统栈 */
+@import "@fontsource-variable/fredoka/index.css";
+
+/* class 策略暗色变体，配合 <head> 内联脚本，非 media（P3） */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* 字体 */
+  --font-display: "Fredoka Variable", "ZCOOL KuaiLe", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+
+  /* 圆角（很圆润软萌 — UI-SPEC 锁定） */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* 亮色调色板（UI-SPEC 完整 token） */
+  --color-bg: #F3FBFE;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #E7F6FB;
+  --color-primary: #17B6D6;
+  --color-primary-hover: #0FA0BE;
+  --color-primary-fg: #FFFFFF;
+  --color-link: #0A7C93;
+  --color-text: #0F2E3A;
+  --color-text-muted: #5A7A85;
+  --color-border: #CDEBF3;
+  --color-success: #34C77B;
+  --color-destructive: #F26D6D;
+  --color-deco-pink: #FF8FC7;
+
+  /* 柔和青蓝染色阴影 */
+  --shadow-soft: 0 6px 24px -8px rgba(23, 182, 214, 0.25);
+}
+
+/* 暗色覆盖：@theme 生成的是 CSS 变量，在 .dark 作用域重定义同名变量（不在 @theme 写第二套） */
+:where(.dark) {
+  --color-bg: #0C1B22;
+  --color-surface: #12262F;
+  --color-surface-muted: #17303A;
+  --color-primary: #3AD2EF;
+  --color-primary-hover: #5CDCF2;
+  --color-primary-fg: #04222B;
+  --color-link: #6FE0F5;
+  --color-text: #E6F6FA;
+  --color-text-muted: #94B4BF;
+  --color-border: #234450;
+  --color-success: #4BD68C;
+  --color-destructive: #F58686;
+  --color-deco-pink: #FF9ECF;
+  /* 暗色降透明避免发灰 */
+  --shadow-soft: 0 6px 24px -8px rgba(23, 182, 214, 0.15);
+}
+
+/* 基线：正文用系统栈 + 主题背景/前景色，随 .dark 自动跟随 */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+/* 焦点可见（UI-SPEC 无障碍） */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

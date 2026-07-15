@@ -1,17 +1,46 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { getAllTools } from '../lib/tools';
+import { getAllAnime } from '../lib/anime';
 
+// 页面经 lib 薄封装读取，不直接触碰内容集合底层 API（证 lib→schema→页面管道通）。
+const tools = await getAllTools();
+const anime = await getAllAnime();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="工具、番剧、和一点点生活">
+  <header
+    class="mx-auto flex max-w-[72rem] items-center justify-between px-4 py-4 md:px-6"
+  >
+    <a href="/" class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+      初曦的窝<span aria-hidden="true" class="text-[var(--color-deco-pink)]"> ✦</span>
+    </a>
+    <ThemeToggle />
+  </header>
+
+  <main class="mx-auto max-w-[72rem] px-4 py-8 md:px-6">
+    <h1 class="font-[var(--font-display)] text-4xl font-semibold text-[var(--color-text)]">
+      初曦的窝
+    </h1>
+    <p class="mt-2 text-[var(--color-text-muted)]">工具、番剧、和一点点生活</p>
+
+    <section class="mt-10">
+      <h2 class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+        工具库
+      </h2>
+      <ul class="mt-3 space-y-1">
+        {tools.map((t) => <li class="text-[var(--color-link)]">{t.data.title}</li>)}
+      </ul>
+    </section>
+
+    <section class="mt-8">
+      <h2 class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+        追番记录
+      </h2>
+      <ul class="mt-3 space-y-1">
+        {anime.map((a) => <li class="text-[var(--color-link)]">{a.data.titleCn}</li>)}
+      </ul>
+    </section>
+  </main>
+</BaseLayout>

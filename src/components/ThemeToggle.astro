@@ -1,0 +1,22 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label="切换深浅色主题"
+  class="grid size-11 place-items-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-muted)]"
+>
+  {/* 亮色显示月亮（点击转暗），暗色显示太阳（点击转亮）；装饰图标 aria-hidden */}
+  <Icon name="ph:moon" class="size-5 dark:hidden" aria-hidden="true" />
+  <Icon name="ph:sun" class="hidden size-5 dark:block" aria-hidden="true" />
+</button>
+
+<script>
+  // 普通 <script>（非 is:inline）：Astro 打包为 module defer，仅切 .dark + 写 localStorage，无框架、无水合。
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const dark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  });
+</script>

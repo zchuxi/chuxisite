@@ -1,0 +1,35 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+// D-02 SEO title 模式；完整 SEO/OG 块由 01-03 追加，本阶段最小。
+const fullTitle = title ? `${title} · 初曦的窝` : '初曦的窝';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    {/* 首个 head 子元素：绘制前同步定主题，杜绝 FOUC（P3）。is:inline 让 Astro 原样内联不打包 */}
+    <script is:inline>
+      const t =
+        localStorage.getItem('theme') ??
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (t === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{fullTitle}</title>
+  </head>
+  <body class="min-h-screen">
+    <slot />
+    <footer
+      class="mt-16 border-t border-[var(--color-border)] bg-[var(--color-surface)] py-6 text-center text-sm text-[var(--color-text-muted)]"
+    >
+      <p>初曦的窝 · 工具、番剧、和一点点生活 ♡</p>
+    </footer>
+  </body>
+</html>
