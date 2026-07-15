@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Star from '../components/deco/Star.astro';
+---
+
+<BaseLayout title="页面走丢了" description="你要找的页面好像不存在，也许它还没被创造出来～">
+  <main class="relative mx-auto flex min-h-[70vh] max-w-[72rem] flex-col items-center justify-center overflow-hidden px-4 py-24 text-center">
+    {/* 走丢装饰：大一号漂浮星,克制点缀,不占文档流、不拦截点击 */}
+    <Star
+      class="floaty-a mb-6 size-16 text-[var(--color-deco-pink)]"
+      aria-hidden="true"
+    />
+    <h1 class="font-display text-2xl font-semibold text-[var(--color-text)]">
+      诶呀，这一页走丢了 (｡•́︿•̀｡)
+    </h1>
+    <p class="mt-4 max-w-md text-[var(--color-text-muted)]">
+      你要找的页面好像不存在，也许它还没被创造出来～
+    </p>
+    <a
+      href="/"
+      class="mt-8 inline-flex items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 py-2.5 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
+    >
+      回到首页
+    </a>
+  </main>
+</BaseLayout>
+
+<style>
+  @keyframes floaty {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .floaty-a {
+    animation: floaty 5s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .floaty-a {
+      animation: none;
+    }
+  }
+</style>
