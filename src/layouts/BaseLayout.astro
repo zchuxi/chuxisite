@@ -3,10 +3,11 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  fullTitle?: string;
 }
-const { title } = Astro.props;
-// D-02 SEO title 模式；完整 SEO/OG 块由 01-03 追加，本阶段最小。
-const fullTitle = title ? `${title} · 初曦的窝` : '初曦的窝';
+const { title, fullTitle: fullTitleProp } = Astro.props;
+// D-02 SEO title 模式；首页用 fullTitle 直接覆盖（站名在前，避免生硬后缀）。完整 SEO/OG 块由 01-03 追加。
+const fullTitle = fullTitleProp ?? (title ? `${title} · 初曦的窝` : '初曦的窝');
 ---
 
 <!doctype html>

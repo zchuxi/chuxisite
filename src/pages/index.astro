@@ -1,46 +1,42 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import IntroBlock from '../components/IntroBlock.astro';
+import EntryCard from '../components/EntryCard.astro';
+import Footer from '../components/Footer.astro';
 import { getAllTools } from '../lib/tools';
 import { getAllAnime } from '../lib/anime';
 
-// 页面经 lib 薄封装读取，不直接触碰内容集合底层 API（证 lib→schema→页面管道通）。
+// 经 lib 薄封装读取种子（不直接 getCollection），入口卡以徽章展示当前收录数，证 lib→schema→页面管道通。
 const tools = await getAllTools();
 const anime = await getAllAnime();
 ---
 
-<BaseLayout title="工具、番剧、和一点点生活">
-  <header
-    class="mx-auto flex max-w-[72rem] items-center justify-between px-4 py-4 md:px-6"
-  >
-    <a href="/" class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
-      初曦的窝<span aria-hidden="true" class="text-[var(--color-deco-pink)]"> ✦</span>
-    </a>
-    <ThemeToggle />
-  </header>
-
-  <main class="mx-auto max-w-[72rem] px-4 py-8 md:px-6">
-    <h1 class="font-[var(--font-display)] text-4xl font-semibold text-[var(--color-text)]">
-      初曦的窝
-    </h1>
-    <p class="mt-2 text-[var(--color-text-muted)]">工具、番剧、和一点点生活</p>
-
-    <section class="mt-10">
-      <h2 class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
-        工具库
-      </h2>
-      <ul class="mt-3 space-y-1">
-        {tools.map((t) => <li class="text-[var(--color-link)]">{t.data.title}</li>)}
-      </ul>
-    </section>
-
-    <section class="mt-8">
-      <h2 class="font-[var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
-        追番记录
-      </h2>
-      <ul class="mt-3 space-y-1">
-        {anime.map((a) => <li class="text-[var(--color-link)]">{a.data.titleCn}</li>)}
-      </ul>
+<BaseLayout fullTitle="初曦的窝 · 工具、番剧、和一点点生活">
+  <Header />
+  <main>
+    <Hero />
+    <IntroBlock />
+    <section
+      class="mx-auto mt-12 grid max-w-[72rem] grid-cols-1 gap-[32px] px-4 md:grid-cols-2 md:px-6"
+    >
+      <EntryCard
+        href="/tools"
+        icon="ph:wrench"
+        title="工具库"
+        description="我收藏与折腾过的好用软件 / 网站，分类整理、图文记录"
+        badge={`${tools.length} 个工具`}
+        emphasis
+      />
+      <EntryCard
+        href="/anime"
+        icon="ph:television"
+        title="追番记录"
+        description="在看 / 看完 / 想看的番，评分、进度与短评都在这里"
+        badge={`${anime.length} 部番剧`}
+      />
     </section>
   </main>
+  <Footer />
 </BaseLayout>
