@@ -1,0 +1,52 @@
+---
+import Star from './Star.astro';
+import Heart from './Heart.astro';
+
+// Hero 插画占位（用户后补真图前的优雅回退）。固定 4/3 比例保占位，切换真图 CLS≈0。
+// aria-hidden + pointer-events-none；青粉渐变 + 中心浮动星星/爱心，动效在 reduced-motion 下静止。
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    'hero-blob pointer-events-none relative grid aspect-[4/3] w-full max-w-[520px] place-items-center rounded-[var(--radius-xl)]',
+    className,
+  ]}
+  aria-hidden="true"
+  style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-deco-pink) 100%);"
+>
+  <Star class="floaty-a size-28 text-white/90 drop-shadow" />
+  <Heart class="floaty-b absolute right-[16%] top-[20%] size-12 text-white/80 drop-shadow" />
+  <Heart class="floaty-c absolute bottom-[18%] left-[18%] size-8 text-white/70" />
+</div>
+
+<style>
+  @keyframes floaty {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .floaty-a {
+    animation: floaty 5s ease-in-out infinite;
+  }
+  .floaty-b {
+    animation: floaty 3.6s ease-in-out infinite;
+  }
+  .floaty-c {
+    animation: floaty 4.4s ease-in-out infinite 0.4s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .floaty-a,
+    .floaty-b,
+    .floaty-c {
+      animation: none;
+    }
+  }
+</style>

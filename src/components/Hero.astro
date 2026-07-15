@@ -1,0 +1,80 @@
+---
+import Blob from './deco/Blob.astro';
+import Star from './deco/Star.astro';
+---
+
+<section class="hero relative overflow-hidden">
+  {/* Hero 背景：低透明青粉渐变 + 少量漂浮星点（装饰，aria-hidden + pointer-events-none） */}
+  <div
+    class="pointer-events-none absolute inset-0 -z-10"
+    aria-hidden="true"
+    style="background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 13%, transparent) 0%, color-mix(in oklab, var(--color-deco-pink) 13%, transparent) 100%);"
+  >
+  </div>
+  <Star
+    class="deco-float deco-a pointer-events-none absolute left-[6%] top-[18%] size-6 text-[var(--color-deco-pink)] opacity-70"
+  />
+  <Star
+    class="deco-float deco-b pointer-events-none absolute right-[10%] bottom-[16%] size-8 text-[var(--color-primary)] opacity-60"
+  />
+
+  <div
+    class="mx-auto grid max-w-[72rem] items-center gap-10 px-4 py-16 md:px-6 lg:grid-cols-2 lg:py-24"
+  >
+    <div class="text-center lg:text-left">
+      <h1
+        class="hero-title font-[family-name:var(--font-display)] font-semibold text-[var(--color-text)]"
+      >
+        工具、番剧、和一点点生活
+      </h1>
+      <p class="mx-auto mt-5 max-w-md text-lg text-[var(--color-text-muted)] lg:mx-0">
+        这里是我的小窝，收藏折腾过的好用工具，也记着在追的番——随手整理，慢慢长大。
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+        <a
+          href="/tools"
+          class="inline-flex min-h-11 items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 text-sm font-semibold text-[var(--color-primary-fg)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-primary-hover)]"
+        >
+          进入工具库
+        </a>
+        <a
+          href="/anime"
+          class="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-6 text-sm font-semibold text-[var(--color-text)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+        >
+          查看追番
+        </a>
+      </div>
+    </div>
+
+    <div class="flex justify-center lg:justify-end">
+      <Blob />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-title {
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.15;
+  }
+  @keyframes deco-drift {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .deco-a {
+    animation: deco-drift 6s ease-in-out infinite;
+  }
+  .deco-b {
+    animation: deco-drift 4.8s ease-in-out infinite 0.6s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deco-float {
+      animation: none;
+    }
+  }
+</style>
