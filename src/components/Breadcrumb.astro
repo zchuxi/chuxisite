@@ -1,0 +1,37 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// 面包屑：<nav aria-label="路径"><ol>，末项 aria-current="page" 无链接。
+interface Props {
+  items: { href?: string; label: string }[];
+}
+const { items } = Astro.props;
+const last = items.length - 1;
+---
+
+<nav aria-label="路径" class="text-sm text-[var(--color-text-muted)]">
+  <ol class="flex flex-wrap items-center gap-1">
+    {items.map((item, i) => {
+      const isLast = i === last;
+      return (
+        <li class="flex items-center gap-1">
+          {isLast ? (
+            <span aria-current="page" class="font-semibold text-[var(--color-text)]">
+              {item.label}
+            </span>
+          ) : (
+            <>
+              <a
+                href={item.href}
+                class="hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-1"
+              >
+                {item.label}
+              </a>
+              <Icon name="ph:caret-right" class="size-3" aria-hidden="true" />
+            </>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
