@@ -8,9 +8,8 @@ import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
-  // D-05: 先填 Vercel 生产域名占位；sitemap/canonical/OG 依赖 site，必须有有效值。
-  // TODO(01-01 Task 5): 首次部署确定真实生产域名后回填并删除本注释。
-  site: 'https://chuxi-wo.vercel.app',
+  // D-05: Vercel 生产域名（首次部署回填）；sitemap/canonical/OG 依赖 site。
+  site: 'https://chuxisite.vercel.app',
   integrations: [mdx(), sitemap(), icon()],
   vite: {
     plugins: [tailwindcss()],
