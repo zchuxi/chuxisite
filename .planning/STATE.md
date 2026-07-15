@@ -8,7 +8,7 @@ progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -27,12 +27,12 @@ progress:
 ## Current Position
 
 Phase: 01 (foundation-shell) — EXECUTING
-Plan: 1 of 3
+Plan: 01-01 complete (1 of 3)
 
 - **Phase:** 1 / 3
-- **Plan:** None yet（待 `/gsd:plan-phase 1`）
-- **Status:** Executing Phase 01
-- **Progress:** [░░░] 0/3 phases complete
+- **Plan:** 01-01 ✓ 完成（Walking Skeleton 已部署上线）；Wave 2 待执行（01-02 视觉外壳 ‖ 01-03 SEO 占位页）
+- **Status:** Executing Phase 01 — Wave 1 done, Wave 2 pending
+- **Progress:** [░░░] 0/3 phases complete（Phase 1: 1/3 plans）
 
 ## Performance Metrics
 
@@ -52,10 +52,13 @@ Plan: 1 of 3
 - 番剧 schema 分层（客观元数据组含 bgmId 预留 + 追番状态组永远手动），数据读取收口 `lib/anime.ts`，为 Bangumi API 迁移铺路
 - 主题初始应用走 `<head>` 内联同步脚本防 FOUC；岛屿最小化，默认全静态 `.astro`
 - 工具库优先级高于追番（核心价值）
+- [01-01] z 从 `astro/zod` 导入（Astro 7 弃用 `astro:content` 的 z 再导出）
+- [01-01] 分支 `master → main`，对齐 GitHub/Vercel 生产分支；git 走本地代理 `127.0.0.1:7897`
+- [01-01] 生产站已上线 `https://chuxisite.vercel.app`（Vercel，output static 免适配器）
 
 ### Todos
 
-- 待 `/gsd:plan-phase 1` 分解 Phase 1
+- Wave 2：执行 01-02（视觉外壳）+ 01-03（SEO 占位页）
 
 ### Blockers
 
@@ -68,9 +71,9 @@ Plan: 1 of 3
 
 ## Session Continuity
 
-**Last session:** 2026-07-14T12:48:30.357Z
+**Last session:** 2026-07-15T14:00:51+08:00
 
-**Next action:** `/gsd:plan-phase 1` — 规划「站点地基与二次元外壳」
+**Next action:** 执行 Phase 1 Wave 2（01-02 + 01-03）
 
 ---
 *State initialized: 2026-07-14*
