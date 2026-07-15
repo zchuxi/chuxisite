@@ -24,7 +24,11 @@
   3. 访客在手机与桌面浏览器均能正常浏览，布局响应式无错位
   4. 维护者新增 / 修改 Markdown 内容文件并 git 提交后，站点自动构建部署更新，内容经类型安全 schema（工具 + 番剧分层字段）校验
   5. 搜索引擎可抓取站点生成的 sitemap.xml，且每个页面输出 title / description / Open Graph meta
-**Plans**: TBD
+**Plans**: 3 plans (02-01..02-03)
+  Plan Summary:
+  - 02-01: 数据层扩展（tags transform + lib 读取函数 + seed 同步）
+  - 02-02: 组件卡双层链接（EntryCard 改造 + 5 个档案组件 + prose）
+  - 02-03: 四张工具库页面 + build 验证推送
 **UI hint**: yes
 
 ### Phase 2: 工具库（核心）
@@ -37,7 +41,11 @@
   2. 访客点击工具进入独立详情页，查看可长可短的图文内容（使用心得、截图、优缺点）
   3. 访客可进入分类页与标签页，页面仅列出该分类 / 标签下的工具
   4. 访客点击工具外链在新标签页打开，且链接带 `rel="noopener noreferrer"`
-**Plans**: TBD
+**Plans**: 3 plans (02-01..02-03)
+  Plan Summary:
+  - 02-01: 数据层扩展（tags transform + lib 读取函数 + seed 同步）
+  - 02-02: 组件卡双层链接（EntryCard 改造 + 5 个档案组件 + prose）
+  - 02-03: 四张工具库页面 + build 验证推送
 **UI hint**: yes
 
 ### Phase 3: 追番记录
@@ -50,7 +58,11 @@
   2. 访客可按观看状态（在看 / 看完 / 想看）筛选番剧列表
   3. 访客进入番剧详情页，查看完整信息、评分、观看进度（看到第 N 话 / 共 M 话）与短评
   4. 维护者以手动录入方式新增番剧封面与元数据，数据层按「客观元数据组 + 追番状态组」分层（含 bgmId 等预留字段），日后接 Bangumi API 无需重写页面
-**Plans**: TBD
+**Plans**: 3 plans (02-01..02-03)
+  Plan Summary:
+  - 02-01: 数据层扩展（tags transform + lib 读取函数 + seed 同步）
+  - 02-02: 组件卡双层链接（EntryCard 改造 + 5 个档案组件 + prose）
+  - 02-03: 四张工具库页面 + build 验证推送
 **UI hint**: yes
 
 ## Progress
