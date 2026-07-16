@@ -88,6 +88,12 @@ const existingTags = [...new Set(allTools.flatMap((t) => t.data.tags))].sort();
         <input id="field-cover" type="text" placeholder="https://" class="form-input" />
       </div>
 
+      <!-- screenshots -->
+      <div class="form-group">
+        <label for="field-screenshots" class="form-label">截图 URL（每行一个）</label>
+        <textarea id="field-screenshots" rows="3" placeholder="https://example.com/shot1.png&#10;https://example.com/shot2.png" class="form-textarea font-mono text-sm"></textarea>
+      </div>
+
       <!-- body -->
       <div class="form-group">
         <label for="field-body" class="form-label">正文（Markdown）</label>
@@ -138,6 +144,7 @@ const existingTags = [...new Set(allTools.flatMap((t) => t.data.tags))].sort();
     var summaryEl = document.getElementById('field-summary');
     var categoryEl = document.getElementById('field-category');
     var coverEl = document.getElementById('field-cover');
+    var screenshotsEl = document.getElementById('field-screenshots');
     var bodyEl = document.getElementById('field-body');
     var form = document.getElementById('new-form');
     var genBtn = document.getElementById('generate-btn');
@@ -307,11 +314,14 @@ const existingTags = [...new Set(allTools.flatMap((t) => t.data.tags))].sort();
         tags: tags.length > 0 ? tags : undefined,
         category: categoryEl.value,
         cover: coverEl.value.trim() || undefined,
+        screenshots: screenshotsEl.value.split('\n').map((s) => s.trim()).filter(Boolean).length > 0
+          ? screenshotsEl.value.split('\n').map((s) => s.trim()).filter(Boolean)
+          : undefined,
         draft: false,
       };
 
       var yaml = '---\n';
-      var keys = ['title', 'url', 'summary', 'tags', 'category', 'cover', 'draft'];
+      var keys = ['title', 'url', 'summary', 'tags', 'category', 'cover', 'screenshots', 'draft'];
       for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
         var v = fields[k];

@@ -25,8 +25,9 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'tools'> };
 const { Content } = await render(entry);
-const { title, url, summary, tags, category } = entry.data;
+const { title, url, summary, tags, category, cover, screenshots } = entry.data;
 const related = await getRelated(category, slugOf(title), 2);
+const hasCover = cover != null && cover !== '';
 ---
 
 <BaseLayout title={`${title} · 工具库`} description={summary}>
@@ -54,6 +55,15 @@ const related = await getRelated(category, slugOf(title), 2);
         )}
       </div>
 
+      {hasCover && (
+        <img
+          src={typeof cover === 'string' ? cover : cover.src}
+          alt={`${title} 封面`}
+          class="size-24 rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+          loading="lazy"
+        />
+      )}
+
       <a
         href={url}
         target="_blank"
@@ -68,6 +78,22 @@ const related = await getRelated(category, slugOf(title), 2);
     <article class="prose mt-12">
       <Content />
     </article>
+
+    {screenshots.length > 0 && (
+      <section class="mt-12">
+        <h2 class="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]">截图</h2>
+        <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
+          {screenshots.map((shot) => (
+            <img
+              src={typeof shot === 'string' ? shot : shot.src}
+              alt={`${title} 截图`}
+              class="aspect-video w-full rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+              loading="lazy"
+            />
+          ))}
+        </div>
+      </section>
+    )}
 
     <ToolDetailNav
       backHref="/tools"

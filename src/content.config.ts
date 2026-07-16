@@ -15,7 +15,10 @@ const tools = defineCollection({
         .transform((arr) => [...new Set(arr)])
         .default([]),
       category: z.string(),
-      cover: image().optional(),
+      cover: z.union([image(), z.string().url()]).optional(),
+      screenshots: z
+        .array(z.union([image(), z.string().url()]))
+        .default([]),
       draft: z.boolean().default(false),
     }),
 });

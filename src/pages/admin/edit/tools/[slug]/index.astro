@@ -29,6 +29,7 @@ const editData = {
     tags: entry.data.tags,
     category: entry.data.category,
     cover: typeof entry.data.cover === 'string' ? entry.data.cover : '',
+    screenshots: entry.data.screenshots.map((s) => (typeof s === 'string' ? s : s.src)),
   },
   hasLocalCover: typeof entry.data.cover !== 'string' && !!entry.data.cover,
   categories,
@@ -110,6 +111,12 @@ const editData = {
         <input id="field-cover" type="text" placeholder="https://" value={editData.fields.cover} class="form-input" />
       </div>
 
+      <!-- screenshots -->
+      <div class="form-group">
+        <label for="field-screenshots" class="form-label">截图 URL（每行一个）</label>
+        <textarea id="field-screenshots" rows="3" placeholder="https://example.com/shot1.png&#10;https://example.com/shot2.png" class="form-textarea font-mono text-sm">{editData.fields.screenshots.join('\n')}</textarea>
+      </div>
+
       <!-- body -->
       <div class="form-group">
         <label for="field-body" class="form-label">正文（Markdown）</label>
@@ -152,6 +159,7 @@ const editData = {
     var summaryEl = document.getElementById('field-summary');
     var categoryEl = document.getElementById('field-category');
     var coverEl = document.getElementById('field-cover');
+    var screenshotsEl = document.getElementById('field-screenshots');
     var bodyEl = document.getElementById('field-body');
     var saveBtn = document.getElementById('save-btn');
     var cancelBtn = document.getElementById('cancel-btn');
@@ -285,6 +293,7 @@ const editData = {
           tags: tags,
           category: categoryEl.value,
           cover: coverEl.value,
+          screenshots: screenshotsEl.value.split('\n').map((s) => s.trim()).filter(Boolean),
           body: bodyEl.value,
         };
         var stored = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
