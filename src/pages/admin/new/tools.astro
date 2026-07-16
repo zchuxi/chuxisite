@@ -1,0 +1,367 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { getAllTools, slugOf } from '../../../lib/tools';
+
+const allTools = await getAllTools();
+const existingSlugs = allTools.map((t) => slugOf(t.data.title));
+const categories = [...new Set(allTools.map((t) => t.data.category))];
+const existingTags = [...new Set(allTools.flatMap((t) => t.data.tags))].sort();
+---
+
+<BaseLayout title="新增工具 · 管理后台" description="新增工具条目">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <Header />
+  <main class="mx-auto max-w-2xl px-4 py-12 md:px-6">
+    <a href="/admin" class="admin-back-link">&larr; 返回工作台</a>
+
+    <h1 class="mt-6 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      新增工具
+    </h1>
+
+    <form id="new-form" class="mt-8 flex flex-col gap-6">
+      <!-- title -->
+      <div class="form-group">
+        <label for="field-title" class="form-label">名称 *</label>
+        <input id="field-title" type="text" required class="form-input" autocomplete="off" />
+        <p id="title-error" class="form-error hidden">名称不能为空</p>
+      </div>
+
+      <!-- slug -->
+      <div class="form-group">
+        <label for="field-slug" class="form-label">Slug</label>
+        <input id="field-slug" type="text" class="form-input slug-input" autocomplete="off" />
+        <p id="slug-error" class="form-error hidden">该 slug 已存在，请修改</p>
+        <p class="form-hint">自动从名称派生，可手动修改</p>
+      </div>
+
+      <!-- url -->
+      <div class="form-group">
+        <label for="field-url" class="form-label">链接 *</label>
+        <input id="field-url" type="url" required class="form-input" />
+        <p id="url-error" class="form-error hidden">请输入有效的 URL</p>
+      </div>
+
+      <!-- summary -->
+      <div class="form-group">
+        <label for="field-summary" class="form-label">一句话描述 *</label>
+        <textarea id="field-summary" rows="2" required class="form-textarea"></textarea>
+        <p id="summary-error" class="form-error hidden">描述不能为空</p>
+      </div>
+
+      <!-- tags -->
+      <div class="form-group">
+        <label class="form-label">标签</label>
+        <div id="tags-container" class="flex flex-wrap items-center gap-2"></div>
+        <div class="flex gap-2">
+          <input id="tag-input" type="text" placeholder="添加标签…" class="form-input flex-1" list="tag-suggestions" />
+          <datalist id="tag-suggestions">
+            {existingTags.map((tag) => (
+              <option value={tag} />
+            ))}
+          </datalist>
+          <button type="button" id="add-tag-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)]">
+            添加
+          </button>
+        </div>
+      </div>
+
+      <!-- category -->
+      <div class="form-group">
+        <label for="field-category" class="form-label">分类 *</label>
+        <select id="field-category" class="form-select">
+          <option value="" disabled selected>请选择</option>
+          {categories.map((cat) => (
+            <option value={cat}>{cat}</option>
+          ))}
+          <option value="" disabled>—— 其他 ——</option>
+        </select>
+        <p id="category-error" class="form-error hidden">请选择分类</p>
+      </div>
+
+      <!-- cover -->
+      <div class="form-group">
+        <label for="field-cover" class="form-label">封面 URL</label>
+        <input id="field-cover" type="text" placeholder="https://" class="form-input" />
+      </div>
+
+      <!-- body -->
+      <div class="form-group">
+        <label for="field-body" class="form-label">正文（Markdown）</label>
+        <textarea id="field-body" rows="8" class="form-textarea font-mono text-sm"></textarea>
+        <div id="preview" class="form-preview prose mt-2 hidden"></div>
+      </div>
+
+      <!-- 生成按钮 -->
+      <div class="mt-4">
+        <button type="submit" id="generate-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+          生成 frontmatter
+        </button>
+      </div>
+    </form>
+
+    <!-- 预览面板 -->
+    <div id="preview-panel" class="preview-panel mt-8 hidden">
+      <div class="flex items-center justify-between gap-2">
+        <span class="form-label">Frontmatter</span>
+        <div class="flex gap-2">
+          <button type="button" id="copy-btn" class="inline-flex min-h-9 items-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-xs font-semibold text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)]">
+            复制
+          </button>
+          <button type="button" id="download-btn" class="inline-flex min-h-9 items-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-xs font-semibold text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)]">
+            下载 JSON
+          </button>
+        </div>
+      </div>
+      <pre id="preview-content" class="mt-3"></pre>
+    </div>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script define:vars={{ existingSlugs, categories, existingTags }}>
+  (function() {
+    var SESSION_KEY = 'chuxi_admin_session';
+    if (localStorage.getItem(SESSION_KEY) !== '1') {
+      window.location.href = '/admin';
+      return;
+    }
+
+    var titleEl = document.getElementById('field-title');
+    var slugEl = document.getElementById('field-slug');
+    var urlEl = document.getElementById('field-url');
+    var summaryEl = document.getElementById('field-summary');
+    var categoryEl = document.getElementById('field-category');
+    var coverEl = document.getElementById('field-cover');
+    var bodyEl = document.getElementById('field-body');
+    var form = document.getElementById('new-form');
+    var genBtn = document.getElementById('generate-btn');
+    var previewPanel = document.getElementById('preview-panel');
+    var previewContent = document.getElementById('preview-content');
+    var copyBtn = document.getElementById('copy-btn');
+    var downloadBtn = document.getElementById('download-btn');
+    var titleError = document.getElementById('title-error');
+    var urlError = document.getElementById('url-error');
+    var summaryError = document.getElementById('summary-error');
+    var categoryError = document.getElementById('category-error');
+    var slugError = document.getElementById('slug-error');
+    var tagInput = document.getElementById('tag-input');
+    var addTagBtn = document.getElementById('add-tag-btn');
+    var tagsContainer = document.getElementById('tags-container');
+    var previewEl = document.getElementById('preview');
+
+    if (!form || !genBtn) return;
+
+    var autoSlugging = true;
+    var tags = [];
+
+    function deriveSlug(val) {
+      return encodeURIComponent(val.trim());
+    }
+
+    titleEl.addEventListener('input', function() {
+      if (autoSlugging) {
+        slugEl.value = deriveSlug(titleEl.value);
+        checkSlug();
+      }
+    });
+
+    slugEl.addEventListener('input', function() {
+      autoSlugging = false;
+      checkSlug();
+    });
+
+    titleEl.addEventListener('blur', function() {
+      autoSlugging = true;
+    });
+
+    function checkSlug() {
+      var val = slugEl.value.trim();
+      if (val && existingSlugs.indexOf(val) !== -1) {
+        slugEl.classList.add('error');
+        slugError.classList.remove('hidden');
+        return false;
+      }
+      slugEl.classList.remove('error');
+      slugError.classList.add('hidden');
+      return true;
+    }
+
+    // Tags
+    function renderTags() {
+      var html = '';
+      for (var i = 0; i < tags.length; i++) {
+        html += '<span class="form-chip" data-tag="' + tags[i] + '">' + tags[i] + '<button type="button" data-remove-tag="' + tags[i] + '" aria-label="删除标签 ' + tags[i] + '">&times;</button></span>';
+      }
+      tagsContainer.innerHTML = html;
+      var btns = tagsContainer.querySelectorAll('[data-remove-tag]');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+          var t = this.getAttribute('data-remove-tag');
+          tags = tags.filter(function(tag) { return tag !== t; });
+          renderTags();
+        });
+      }
+    }
+
+    function addTag() {
+      var val = tagInput.value.trim().toLowerCase();
+      if (val && tags.indexOf(val) === -1) {
+        tags.push(val);
+        renderTags();
+      }
+      tagInput.value = '';
+      tagInput.focus();
+    }
+
+    addTagBtn.addEventListener('click', addTag);
+    tagInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+    });
+
+    // 校验
+    function validate() {
+      var valid = true;
+
+      if (!titleEl.value.trim()) {
+        titleEl.classList.add('error');
+        titleError.classList.remove('hidden');
+        valid = false;
+      } else {
+        titleEl.classList.remove('error');
+        titleError.classList.add('hidden');
+      }
+
+      var urlVal = urlEl.value.trim();
+      if (!urlVal) {
+        urlEl.classList.add('error');
+        urlError.classList.remove('hidden');
+        valid = false;
+      } else {
+        try { new URL(urlVal); urlEl.classList.remove('error'); urlError.classList.add('hidden'); }
+        catch (_) { urlEl.classList.add('error'); urlError.classList.remove('hidden'); valid = false; }
+      }
+
+      if (!summaryEl.value.trim()) {
+        summaryEl.classList.add('error');
+        summaryError.classList.remove('hidden');
+        valid = false;
+      } else {
+        summaryEl.classList.remove('error');
+        summaryError.classList.add('hidden');
+      }
+
+      if (!categoryEl.value) {
+        categoryEl.classList.add('error');
+        categoryError.classList.remove('hidden');
+        valid = false;
+      } else {
+        categoryEl.classList.remove('error');
+        categoryError.classList.add('hidden');
+      }
+
+      if (!checkSlug()) valid = false;
+
+      genBtn.disabled = !valid;
+      return valid;
+    }
+
+    titleEl.addEventListener('input', validate);
+    urlEl.addEventListener('input', validate);
+    summaryEl.addEventListener('input', validate);
+    categoryEl.addEventListener('change', validate);
+
+    // Body 预览
+    function loadMarked(cb) {
+      if (window.marked) { cb(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.min.js';
+      s.onload = cb;
+      s.onerror = function() { previewEl.classList.add('hidden'); };
+      document.head.appendChild(s);
+    }
+
+    bodyEl.addEventListener('input', function() {
+      if (window.marked && bodyEl.value.trim()) {
+        previewEl.classList.remove('hidden');
+        previewEl.innerHTML = window.marked.parse(bodyEl.value);
+      } else {
+        previewEl.classList.add('hidden');
+      }
+    });
+
+    // 生成 frontmatter
+    function generate() {
+      if (!validate()) return;
+
+      var slug = slugEl.value.trim() || deriveSlug(titleEl.value);
+      var fields = {
+        title: titleEl.value.trim(),
+        url: urlEl.value.trim(),
+        summary: summaryEl.value.trim(),
+        tags: tags.length > 0 ? tags : undefined,
+        category: categoryEl.value,
+        cover: coverEl.value.trim() || undefined,
+        draft: false,
+      };
+
+      var yaml = '---\n';
+      var keys = ['title', 'url', 'summary', 'tags', 'category', 'cover', 'draft'];
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        var v = fields[k];
+        if (v === undefined) continue;
+        if (Array.isArray(v)) {
+          yaml += k + ':\n';
+          for (var j = 0; j < v.length; j++) {
+            yaml += '  - "' + v[j] + '"\n';
+          }
+        } else if (typeof v === 'string') {
+          yaml += k + ': "' + v.replace(/"/g, '\\"') + '"\n';
+        } else {
+          yaml += k + ': ' + v + '\n';
+        }
+      }
+      yaml += '---\n\n';
+      yaml += bodyEl.value;
+
+      var jsonFields = {};
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if (fields[k] !== undefined) jsonFields[k] = fields[k];
+      }
+      jsonFields.body = bodyEl.value;
+      var json = JSON.stringify(jsonFields, null, 2);
+
+      previewContent.textContent = yaml;
+      previewPanel.classList.remove('hidden');
+      previewPanel.scrollIntoView({ behavior: 'smooth' });
+
+      copyBtn.onclick = function() {
+        navigator.clipboard.writeText(yaml).catch(function() {});
+      };
+
+      downloadBtn.onclick = function() {
+        var blob = new Blob([json], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = slug + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+    }
+
+    form.addEventListener('submit', function(e) { e.preventDefault(); generate(); });
+
+    validate();
+    loadMarked(function() {});
+  })();
+</script>

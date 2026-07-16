@@ -12,13 +12,13 @@ import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
   const tools = await getAllTools();
-  const slugs = tools.map((t) => slugOf(t.data.title));
+  const slugs = tools.map((t) => t.data.title);
   if (new Set(slugs).size !== slugs.length) {
     const dupes = slugs.filter((s, i) => slugs.indexOf(s) !== i);
     throw new Error(`[tools] duplicate slug: ${[...new Set(dupes)].join(', ')}`);
   }
   return tools.map((t) => ({
-    params: { slug: slugOf(t.data.title) },
+    params: { slug: t.data.title },
     props: { entry: t },
   }));
 }

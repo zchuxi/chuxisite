@@ -33,6 +33,10 @@ const anime = defineCollection({
       cover: z.union([image(), z.string().url()]).optional(), // image() 放前，兼容本地/远程
       episodes: z.number().optional(),
       airDate: z.coerce.date().optional(),
+      genre: z
+        .array(z.string().transform((s) => s.trim().toLowerCase()))
+        .transform((arr) => [...new Set(arr)])
+        .default([]), // 手动维护，未来可被 Bangumi API 补充
       // —— 追番状态组（永远手动）——
       status: z.enum(['watching', 'done', 'plan']),
       myRating: z.number().min(0).max(10).optional(),

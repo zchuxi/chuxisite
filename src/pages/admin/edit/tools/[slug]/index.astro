@@ -1,0 +1,314 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import Header from '../../../../../components/Header.astro';
+import Footer from '../../../../../components/Footer.astro';
+import { getAllTools, slugOf } from '../../../../../lib/tools';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const items = await getAllTools();
+  return items.map((t) => ({
+    params: { slug: t.data.title },
+    props: { entry: t },
+  }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'tools'> };
+
+const allTools = await getAllTools();
+const categories = [...new Set(allTools.map((t) => t.data.category))];
+
+const editData = {
+  id: entry.id,
+  slug: slugOf(entry.data.title),
+  type: 'tools',
+  fields: {
+    title: entry.data.title,
+    url: entry.data.url,
+    summary: entry.data.summary,
+    tags: entry.data.tags,
+    category: entry.data.category,
+    cover: typeof entry.data.cover === 'string' ? entry.data.cover : '',
+  },
+  hasLocalCover: typeof entry.data.cover !== 'string' && !!entry.data.cover,
+  categories,
+  body: entry.body || '',
+};
+---
+
+<BaseLayout title="编辑工具 · 管理后台" description={`编辑 ${entry.data.title}`}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <Header />
+  <main class="mx-auto max-w-2xl px-4 py-12 md:px-6">
+    <a href="/admin" class="admin-back-link">&larr; 返回工作台</a>
+
+    <h1 class="mt-6 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      编辑工具：{editData.fields.title}
+    </h1>
+
+    <form id="edit-form" class="mt-8 flex flex-col gap-6">
+      <!-- title -->
+      <div class="form-group">
+        <label for="field-title" class="form-label">名称 *</label>
+        <input id="field-title" type="text" required value={editData.fields.title} class="form-input" />
+        <p id="title-error" class="form-error hidden">名称不能为空</p>
+      </div>
+
+      <!-- url -->
+      <div class="form-group">
+        <label for="field-url" class="form-label">链接 *</label>
+        <input id="field-url" type="url" required value={editData.fields.url} class="form-input" />
+        <p id="url-error" class="form-error hidden">请输入有效的 URL</p>
+      </div>
+
+      <!-- summary -->
+      <div class="form-group">
+        <label for="field-summary" class="form-label">一句话描述 *</label>
+        <textarea id="field-summary" rows="2" required class="form-textarea">{editData.fields.summary}</textarea>
+        <p id="summary-error" class="form-error hidden">描述不能为空</p>
+      </div>
+
+      <!-- tags -->
+      <div class="form-group">
+        <label class="form-label">标签</label>
+        <div id="tags-container" class="flex flex-wrap items-center gap-2">
+          {editData.fields.tags.map((tag) => (
+            <span class="form-chip" data-tag={tag}>
+              {tag}
+              <button type="button" data-remove-tag={tag} aria-label={`删除标签 ${tag}`}>&times;</button>
+            </span>
+          ))}
+        </div>
+        <div class="flex gap-2">
+          <input id="tag-input" type="text" placeholder="添加标签…" class="form-input flex-1" />
+          <button type="button" id="add-tag-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)]">
+            添加
+          </button>
+        </div>
+      </div>
+
+      <!-- category -->
+      <div class="form-group">
+        <label for="field-category" class="form-label">分类 *</label>
+        <select id="field-category" class="form-select">
+          {editData.categories.map((cat) => (
+            <option value={cat} selected={editData.fields.category === cat}>{cat}</option>
+          ))}
+          <option value="" disabled>—— 其他 ——</option>
+        </select>
+        <p id="category-error" class="form-error hidden">请选择分类</p>
+      </div>
+
+      <!-- cover -->
+      <div class="form-group">
+        <label for="field-cover" class="form-label">封面 URL</label>
+        {editData.hasLocalCover && (
+          <p class="form-hint">当前封面为本地图片，编辑时自动保留原值</p>
+        )}
+        <input id="field-cover" type="text" placeholder="https://" value={editData.fields.cover} class="form-input" />
+      </div>
+
+      <!-- body -->
+      <div class="form-group">
+        <label for="field-body" class="form-label">正文（Markdown）</label>
+        <textarea id="field-body" rows="10" class="form-textarea font-mono text-sm">{editData.body}</textarea>
+        <div class="flex items-center gap-2">
+          <span class="form-hint">预览</span>
+        </div>
+        <div id="preview" class="form-preview prose"></div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="mt-4 flex items-center gap-4">
+        <button type="submit" id="save-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+          保存
+        </button>
+        <button type="button" id="cancel-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-6 font-semibold text-[var(--color-text-muted)] transition hover:text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2">
+          取消
+        </button>
+      </div>
+    </form>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script define:vars={{ editData }}>
+  (function() {
+    var EDIT_KEY = 'chuxi_admin_edit_v1';
+    var SESSION_KEY = 'chuxi_admin_session';
+
+    if (localStorage.getItem(SESSION_KEY) !== '1') {
+      window.location.href = '/admin';
+      return;
+    }
+
+    var form = document.getElementById('edit-form');
+    var titleEl = document.getElementById('field-title');
+    var urlEl = document.getElementById('field-url');
+    var summaryEl = document.getElementById('field-summary');
+    var categoryEl = document.getElementById('field-category');
+    var coverEl = document.getElementById('field-cover');
+    var bodyEl = document.getElementById('field-body');
+    var saveBtn = document.getElementById('save-btn');
+    var cancelBtn = document.getElementById('cancel-btn');
+    var tagInput = document.getElementById('tag-input');
+    var addTagBtn = document.getElementById('add-tag-btn');
+    var tagsContainer = document.getElementById('tags-container');
+    var previewEl = document.getElementById('preview');
+    var titleError = document.getElementById('title-error');
+    var urlError = document.getElementById('url-error');
+    var summaryError = document.getElementById('summary-error');
+    var categoryError = document.getElementById('category-error');
+
+    if (!form || !saveBtn) return;
+
+    var tags = editData.fields.tags.slice();
+
+    // SSR tags 绑定删除事件
+    function bindTagRemoves() {
+      var btns = tagsContainer.querySelectorAll('[data-remove-tag]');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+          var t = this.getAttribute('data-remove-tag');
+          tags = tags.filter(function(tag) { return tag !== t; });
+          renderTags();
+        });
+      }
+    }
+
+    function loadDraft() {
+      try {
+        var stored = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+        var saved = stored['tools:' + editData.fields.title];
+        if (saved) {
+          if (saved.title != null) titleEl.value = saved.title;
+          if (saved.url != null) urlEl.value = saved.url;
+          if (saved.summary != null) summaryEl.value = saved.summary;
+          if (saved.tags) tags = saved.tags.slice();
+          if (saved.category != null) categoryEl.value = saved.category;
+          if (saved.cover != null) coverEl.value = saved.cover;
+          if (saved.body != null) bodyEl.value = saved.body;
+          renderTags();
+        }
+      } catch (_) {}
+    }
+
+    function renderTags() {
+      var html = '';
+      for (var i = 0; i < tags.length; i++) {
+        html += '<span class="form-chip" data-tag="' + tags[i] + '">' + tags[i] + '<button type="button" data-remove-tag="' + tags[i] + '" aria-label="删除标签 ' + tags[i] + '">&times;</button></span>';
+      }
+      tagsContainer.innerHTML = html;
+      bindTagRemoves();
+    }
+
+    function addTag() {
+      var val = tagInput.value.trim().toLowerCase();
+      if (val && tags.indexOf(val) === -1) {
+        tags.push(val);
+        renderTags();
+      }
+      tagInput.value = '';
+      tagInput.focus();
+    }
+
+    function validate() {
+      var valid = true;
+
+      if (!titleEl.value.trim()) {
+        titleEl.classList.add('error');
+        titleError.classList.remove('hidden');
+        valid = false;
+      } else {
+        titleEl.classList.remove('error');
+        titleError.classList.add('hidden');
+      }
+
+      var urlVal = urlEl.value.trim();
+      if (!urlVal) {
+        urlEl.classList.add('error');
+        urlError.classList.remove('hidden');
+        valid = false;
+      } else {
+        try { new URL(urlVal); urlEl.classList.remove('error'); urlError.classList.add('hidden'); }
+        catch (_) { urlEl.classList.add('error'); urlError.classList.remove('hidden'); valid = false; }
+      }
+
+      if (!summaryEl.value.trim()) {
+        summaryEl.classList.add('error');
+        summaryError.classList.remove('hidden');
+        valid = false;
+      } else {
+        summaryEl.classList.remove('error');
+        summaryError.classList.add('hidden');
+      }
+
+      if (!categoryEl.value) {
+        categoryEl.classList.add('error');
+        categoryError.classList.remove('hidden');
+        valid = false;
+      } else {
+        categoryEl.classList.remove('error');
+        categoryError.classList.add('hidden');
+      }
+
+      saveBtn.disabled = !valid;
+      return valid;
+    }
+
+    function renderPreview() {
+      if (window.marked) {
+        previewEl.innerHTML = window.marked.parse(bodyEl.value);
+      }
+    }
+
+    function loadMarked(cb) {
+      if (window.marked) { cb(); return; }
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.min.js';
+      s.onload = cb;
+      s.onerror = function() { previewEl.textContent = bodyEl.value; };
+      document.head.appendChild(s);
+    }
+
+    function save() {
+      if (!validate()) return;
+      try {
+        var fields = {
+          title: titleEl.value.trim(),
+          url: urlEl.value.trim(),
+          summary: summaryEl.value.trim(),
+          tags: tags,
+          category: categoryEl.value,
+          cover: coverEl.value,
+          body: bodyEl.value,
+        };
+        var stored = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+        stored['tools:' + editData.fields.title] = fields;
+        localStorage.setItem(EDIT_KEY, JSON.stringify(stored));
+        window.location.href = '/admin';
+      } catch (e) {
+        alert('保存失败: ' + e.message);
+      }
+    }
+
+    form.addEventListener('submit', function(e) { e.preventDefault(); save(); });
+    cancelBtn.addEventListener('click', function() { window.location.href = '/admin'; });
+    titleEl.addEventListener('input', validate);
+    urlEl.addEventListener('input', validate);
+    summaryEl.addEventListener('input', validate);
+    categoryEl.addEventListener('change', validate);
+    addTagBtn.addEventListener('click', addTag);
+    tagInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
+    bodyEl.addEventListener('input', function() { if (window.marked) renderPreview(); });
+
+    loadDraft();
+    validate();
+    bindTagRemoves();
+    loadMarked(function() { renderPreview(); });
+  })();
+</script>

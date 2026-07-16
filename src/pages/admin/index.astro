@@ -87,14 +87,19 @@ const adminItems = [
       </div>
 
       <!-- 追番网格 -->
-      <section data-grid="anime" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <div class="mt-8">
+        <a href="/admin/new/anime" class="mb-4 inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)]">
+          + 新增追番
+        </a>
+      </div>
+      <section data-grid="anime" class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {anime.length === 0 ? (
           <EmptyState heading="追番清单还空空如也～" body="还没有录入任何番剧" />
         ) : (
           anime.map((a) => (
             <div class="relative">
               <AnimeCard
-                href={`#edit/anime/${animeSlugOf(a.data.titleCn)}`}
+                href={`/admin/edit/anime/${animeSlugOf(a.data.titleCn)}`}
                 cover={a.data.cover}
                 titleCn={a.data.titleCn}
                 status={a.data.status}
@@ -117,14 +122,22 @@ const adminItems = [
       </section>
 
       <!-- 工具网格 -->
-      <section data-grid="tools" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8" hidden>
+      <div class="mt-8">
+        <a href="/admin/new/tools" class="inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)]">
+          + 新增工具
+        </a>
+        <a href="/admin/categories" class="ml-3 inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-sm font-semibold text-[var(--color-text-muted)] transition hover:text-[var(--color-primary)]">
+          分类管理
+        </a>
+      </div>
+      <section data-grid="tools" class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8" hidden>
         {tools.length === 0 ? (
           <EmptyState heading="工具库还空空如也～" body="还没有收录任何工具" />
         ) : (
           tools.map((t) => (
             <div class="relative">
               <EntryCard
-                href={`#edit/tools/${toolsSlugOf(t.data.title)}`}
+                href={`/admin/edit/tools/${toolsSlugOf(t.data.title)}`}
                 icon="ph:wrench"
                 title={t.data.title}
                 description={t.data.summary}
@@ -150,10 +163,10 @@ const adminItems = [
 </BaseLayout>
 
 <script define:vars={{ adminItems }}>
-  // 硬编码密码（D-03 决策：单人站 + 公开只读站点，防偶然访问）
   const PW = 'chuxi-admin-2026';
   const SESSION_KEY = 'chuxi_admin_session';
   const DELETED_KEY = 'chuxi_admin_deleted_v1';
+  const EDIT_KEY = 'chuxi_admin_edit_v1';
 
   const pwView = document.getElementById('pw-view');
   const dashboard = document.getElementById('dashboard');
@@ -174,6 +187,31 @@ const adminItems = [
     const authed = isAuthed();
     pwView.classList.toggle('hidden', authed);
     dashboard.classList.toggle('hidden', !authed);
+  }
+
+  function applyEdits() {
+    try {
+      const edits = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+      Object.keys(edits).forEach((key) => {
+        const sep = key.indexOf(':');
+        if (sep === -1) return;
+        const type = key.slice(0, sep);
+        const title = key.slice(sep + 1);
+        const cards = document.querySelectorAll(`[data-delete]`);
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i];
+          if (card.dataset.type !== type) continue;
+          const parent = card.closest('.relative');
+          if (!parent) continue;
+          if (parent.querySelector('.edit-badge')) continue;
+          const badge = document.createElement('div');
+          badge.className = 'edit-badge';
+          badge.textContent = '✎';
+          badge.setAttribute('aria-label', '已编辑');
+          parent.appendChild(badge);
+        }
+      });
+    } catch (_) {}
   }
 
   pwForm.addEventListener('submit', (e) => {
@@ -216,14 +254,21 @@ const adminItems = [
       )
     ) {
       btn.closest('.relative')?.classList.add('hidden');
+      // 清理 edit key
+      try {
+        const edits = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+        delete edits[`${type}:${item.title}`];
+        localStorage.setItem(EDIT_KEY, JSON.stringify(edits));
+      } catch (_) {}
       const del = getDeleted();
       del.add(`${type}:${id}`);
       setDeleted(del);
     }
   });
 
-  // 初始化：视图切换 + 刷新后视觉保持删除状态
+  // 初始化：视图切换 + 已编辑标记 + 删除状态视觉保持
   renderView();
+  applyEdits();
   getDeleted().forEach((key) => {
     const [type, id] = key.split(':');
     dashboard

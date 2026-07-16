@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import AnimeCard from '../../../../components/AnimeCard.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import EmptyState from '../../../../components/EmptyState.astro';
+import { getAllAnime, getAnimeByGenre } from '../../../../lib/anime';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const items = await getAllAnime();
+  const genreMap = new Map<string, CollectionEntry<'anime'>[]>();
+  for (const a of items)
+    for (const g of a.data.genre) {
+      const list = genreMap.get(g) ?? [];
+      list.push(a);
+      genreMap.set(g, list);
+    }
+  return [...genreMap.entries()].map(([genre, entries]) => ({
+    params: { genre },
+    props: { entries, genre },
+  }));
+}
+
+const { entries, genre } = Astro.props as { entries: CollectionEntry<'anime'>[]; genre: string };
+---
+
+<BaseLayout title={`${genre} · 追番记录`} description={`类型为「${genre}」的全部番剧`}>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <Breadcrumb
+      items={[
+        { href: '/', label: '首页' },
+        { href: '/anime', label: '追番' },
+        { label: genre },
+      ]}
+    />
+
+    <h1 class="mt-8 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      {genre} <span class="text-base font-normal text-[var(--color-text-muted)]">{entries.length} 部</span>
+    </h1>
+
+    {entries.length === 0 ? (
+      <EmptyState heading="还没有这个类型的番剧" body="先去看点新番吧 🎬" />
+    ) : (
+      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {entries.map((a) => (
+          <AnimeCard
+            href={`/anime/${encodeURIComponent(a.data.titleCn)}`}
+            cover={a.data.cover}
+            titleCn={a.data.titleCn}
+            status={a.data.status}
+            myRating={a.data.myRating}
+            progress={a.data.progress}
+            episodes={a.data.episodes}
+          />
+        ))}
+      </section>
+    )}
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>

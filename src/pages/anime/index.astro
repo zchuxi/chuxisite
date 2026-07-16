@@ -8,12 +8,50 @@ import EmptyState from '../../components/EmptyState.astro';
 import { getAllAnime, slugOf } from '../../lib/anime';
 
 const items = await getAllAnime();
+const genreCounts = new Map<string, number>();
+for (const a of items)
+  for (const g of a.data.genre)
+    genreCounts.set(g, (genreCounts.get(g) ?? 0) + 1);
+const genres = [...genreCounts.entries()].sort((a, b) => b[1] - a[1]);
+
+const watching = items.filter((a) => a.data.status === 'watching').length;
+const done = items.filter((a) => a.data.status === 'done').length;
+const plan = items.filter((a) => a.data.status === 'plan').length;
+const rated = items.filter((a) => a.data.myRating != null && a.data.myRating > 0);
+const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating!, 0) / rated.length).toFixed(1) : null;
 ---
 
 <BaseLayout title="追番记录" description="在看 / 喝完 / 想看的番，评分、进度与短评都在这里">
   <Header />
   <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
     <p class="mt-4 text-sm text-[var(--color-text-muted)]">共 {items.length} 部 · 慢补番中～</p>
+
+    {items.length > 0 && (
+      <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="rounded-[var(--radius-md)] bg-[var(--color-surface-muted)] p-3 text-center">
+          <p class="text-2xl font-bold text-[var(--color-primary)]">{items.length}</p>
+          <p class="text-xs text-[var(--color-text-muted)]">总番数</p>
+        </div>
+        <div class="rounded-[var(--radius-md)] bg-[var(--color-surface-muted)] p-3 text-center">
+          <p class="text-2xl font-bold text-[var(--color-success)]">{watching}</p>
+          <p class="text-xs text-[var(--color-text-muted)]">在看</p>
+        </div>
+        <div class="rounded-[var(--radius-md)] bg-[var(--color-surface-muted)] p-3 text-center">
+          <p class="text-2xl font-bold text-[var(--color-primary)]">{done}</p>
+          <p class="text-xs text-[var(--color-text-muted)]">看完</p>
+        </div>
+        <div class="rounded-[var(--radius-md)] bg-[var(--color-surface-muted)] p-3 text-center">
+          <p class="text-2xl font-bold text-[var(--color-text-muted)]">{plan}</p>
+          <p class="text-xs text-[var(--color-text-muted)]">想看</p>
+        </div>
+        {avgRating && (
+          <div class="col-span-full rounded-[var(--radius-md)] bg-[var(--color-surface-muted)] p-3 text-center sm:col-span-4">
+            <p class="text-2xl font-bold text-[var(--color-deco-pink)]">{avgRating}</p>
+            <p class="text-xs text-[var(--color-text-muted)]">平均分（{rated.length} 部已评分）</p>
+          </div>
+        )}
+      </div>
+    )}
 
     <PillRow
       class="mt-8"
@@ -24,6 +62,19 @@ const items = await getAllAnime();
         { href: '/anime/status/plan', label: '想看', active: false },
       ]}
     />
+
+    {genres.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {genres.map(([g, count]) => (
+          <a
+            href={`/anime/genre/${encodeURIComponent(g)}`}
+            class="rounded-full bg-[var(--color-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)] transition hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-fg)]"
+          >
+            {g} ({count})
+          </a>
+        ))}
+      </div>
+    )}
 
     {items.length === 0 ? (
       <EmptyState

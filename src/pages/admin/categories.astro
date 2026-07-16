@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getAllTools, slugOf } from '../../lib/tools';
+
+const allTools = await getAllTools();
+const categoryTools = new Map<string, { title: string; slug: string; summary: string }[]>();
+for (const t of allTools) {
+  const cat = t.data.category;
+  if (!categoryTools.has(cat)) categoryTools.set(cat, []);
+  categoryTools.get(cat)!.push({
+    title: t.data.title,
+    slug: slugOf(t.data.title),
+    summary: t.data.summary,
+  });
+}
+const categories = [...categoryTools.entries()].sort((a, b) => b[1].length - a[1].length);
+---
+
+<BaseLayout title="分类管理 · 管理后台" description="工具分类概览">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <Header />
+  <main class="mx-auto max-w-2xl px-4 py-12 md:px-6">
+    <a href="/admin" class="admin-back-link">&larr; 返回工作台</a>
+
+    <h1 class="mt-6 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      分类管理
+    </h1>
+
+    <p class="mt-2 text-sm text-[var(--color-text-muted)]">共 {categories.length} 个分类 · {allTools.length} 件工具</p>
+
+    <div class="mt-8 flex flex-col gap-6">
+      {categories.map(([cat, tools]) => (
+        <section class="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-[family-name:var(--font-display)] text-lg font-semibold text-[var(--color-text)]">
+              {cat}
+            </h2>
+            <span class="text-sm text-[var(--color-text-muted)]">{tools.length} 件工具</span>
+          </div>
+          <ul class="mt-3 flex flex-col gap-2">
+            {tools.map((t) => (
+              <li>
+                <a
+                  href={`/admin/edit/tools/${t.slug}`}
+                  class="block rounded-[var(--radius-sm)] px-3 py-2 text-sm text-[var(--color-text-muted)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text)]"
+                >
+                  <span class="font-medium text-[var(--color-text)]">{t.title}</span>
+                  <span class="ml-2">{t.summary}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script>
+  (function() {
+    if (localStorage.getItem('chuxi_admin_session') !== '1') {
+      window.location.href = '/admin';
+    }
+  })();
+</script>

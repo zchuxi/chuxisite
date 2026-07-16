@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'anime'> };
 const { Content } = await render(entry);
-const { titleCn, titleJa, cover, status, myRating, progress, episodes, airDate, comment } = entry.data;
+const { titleCn, titleJa, cover, status, myRating, progress, episodes, airDate, comment, genre } = entry.data;
 
 // MDX body 为空的判定：entry.body（frontmatter 之外的原始 markdown）纯空白即视为无正文
 const mdxEmpty = !entry.body?.trim();
@@ -103,6 +103,20 @@ const description =
         />
       </div>
     </section>
+
+    {/* 类型标签 */}
+    {genre.length > 0 && (
+      <div class="mt-8 flex flex-wrap gap-2">
+        {genre.map((g) => (
+          <a
+            href={`/anime/genre/${encodeURIComponent(g)}`}
+            class="rounded-full bg-[var(--color-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)] transition hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-fg)]"
+          >
+            {g}
+          </a>
+        ))}
+      </div>
+    )}
 
     {/* MDX body（空则 fallback 文案） */}
     <div class="mt-12">

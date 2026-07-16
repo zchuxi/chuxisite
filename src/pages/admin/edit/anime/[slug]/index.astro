@@ -1,0 +1,317 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import Header from '../../../../../components/Header.astro';
+import Footer from '../../../../../components/Footer.astro';
+import { getAllAnime, slugOf } from '../../../../../lib/anime';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const items = await getAllAnime();
+  return items.map((a) => ({
+    params: { slug: a.data.titleCn },
+    props: { entry: a },
+  }));
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'anime'> };
+
+const editData = {
+  id: entry.id,
+  slug: slugOf(entry.data.titleCn),
+  type: 'anime',
+  fields: {
+    titleCn: entry.data.titleCn,
+    titleJa: entry.data.titleJa || '',
+    status: entry.data.status,
+    progress: entry.data.progress,
+    episodes: entry.data.episodes ?? '',
+    myRating: entry.data.myRating ?? '',
+    comment: entry.data.comment || '',
+    cover: typeof entry.data.cover === 'string' ? entry.data.cover : '',
+    airDate: entry.data.airDate ? entry.data.airDate.toISOString().slice(0, 10) : '',
+    genre: entry.data.genre,
+  },
+  hasLocalCover: typeof entry.data.cover !== 'string' && !!entry.data.cover,
+};
+---
+
+<BaseLayout title="编辑追番 · 管理后台" description={`编辑 ${entry.data.titleCn}`}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <Header />
+  <main class="mx-auto max-w-2xl px-4 py-12 md:px-6">
+    <a href="/admin" class="admin-back-link">&larr; 返回工作台</a>
+
+    <h1 class="mt-6 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      编辑追番：{editData.fields.titleCn}
+    </h1>
+
+    <form id="edit-form" class="mt-8 flex flex-col gap-6">
+      <!-- titleCn 只读 -->
+      <div class="form-group">
+        <label class="form-label">名称</label>
+        <p class="form-input cursor-not-allowed opacity-60">{editData.fields.titleCn}</p>
+      </div>
+
+      <!-- titleJa 只读 -->
+      <div class="form-group">
+        <label class="form-label">日文名</label>
+        <p class="form-hint">{editData.fields.titleJa || '（未填写）'}</p>
+      </div>
+
+      <!-- status -->
+      <div class="form-group">
+        <label for="field-status" class="form-label">状态</label>
+        <select id="field-status" class="form-select">
+          <option value="watching" selected={editData.fields.status === 'watching'}>在看</option>
+          <option value="done" selected={editData.fields.status === 'done'}>看完</option>
+          <option value="plan" selected={editData.fields.status === 'plan'}>想看</option>
+        </select>
+      </div>
+
+      <!-- progress / episodes -->
+      <div class="form-group">
+        <label for="field-progress" class="form-label">观看进度</label>
+        <div class="flex items-center gap-2">
+          <input
+            id="field-progress"
+            type="number"
+            min="0"
+            value={editData.fields.progress}
+            class="form-input w-24"
+          />
+          <span class="text-sm text-[var(--color-text-muted)]">
+            / {editData.fields.episodes || '?'} 集
+          </span>
+        </div>
+        <p id="progress-error" class="form-error hidden">请输入有效数字（≥0）</p>
+      </div>
+
+      <!-- myRating -->
+      <div class="form-group">
+        <label for="field-rating" class="form-label">评分（0-10）</label>
+        <input
+          id="field-rating"
+          type="number"
+          min="0"
+          max="10"
+          step="1"
+          value={editData.fields.myRating}
+          placeholder="未评分"
+          class="form-input w-24"
+        />
+        <p id="rating-error" class="form-error hidden">评分需为 0-10 的整数</p>
+      </div>
+
+      <!-- comment -->
+      <div class="form-group">
+        <label for="field-comment" class="form-label">短评</label>
+        <textarea
+          id="field-comment"
+          rows="3"
+          class="form-textarea"
+        >{editData.fields.comment}</textarea>
+      </div>
+
+      <!-- cover -->
+      <div class="form-group">
+        <label for="field-cover" class="form-label">封面 URL</label>
+        {editData.hasLocalCover && (
+          <p class="form-hint">当前封面为本地图片，编辑时自动保留原值</p>
+        )}
+        <input
+          id="field-cover"
+          type="text"
+          placeholder="https://"
+          value={editData.fields.cover}
+          class="form-input"
+        />
+      </div>
+
+      <!-- airDate 只读 -->
+      <div class="form-group">
+        <label class="form-label">播出日期</label>
+        <p class="form-hint">{editData.fields.airDate || '（未填写）'}</p>
+      </div>
+
+      <!-- genre -->
+      <div class="form-group">
+        <label class="form-label">类型标签</label>
+        <div id="genre-container" class="flex flex-wrap items-center gap-2">
+          {editData.fields.genre.map((g) => (
+            <span class="form-chip" data-genre={g}>
+              {g}
+              <button type="button" data-remove-genre={g} aria-label={`删除类型 ${g}`}>&times;</button>
+            </span>
+          ))}
+        </div>
+        <div class="flex gap-2">
+          <input id="genre-input" type="text" placeholder="添加类型…" class="form-input flex-1" />
+          <button type="button" id="add-genre-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)]">
+            添加
+          </button>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="mt-4 flex items-center gap-4">
+        <button type="submit" id="save-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+          保存
+        </button>
+        <button type="button" id="cancel-btn" class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-6 font-semibold text-[var(--color-text-muted)] transition hover:text-[var(--color-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2">
+          取消
+        </button>
+      </div>
+    </form>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script define:vars={{ editData }}>
+  (function() {
+    const EDIT_KEY = 'chuxi_admin_edit_v1';
+    const SESSION_KEY = 'chuxi_admin_session';
+
+    if (localStorage.getItem(SESSION_KEY) !== '1') {
+      window.location.href = '/admin';
+      return;
+    }
+
+    var form = document.getElementById('edit-form');
+    var statusEl = document.getElementById('field-status');
+    var progressEl = document.getElementById('field-progress');
+    var ratingEl = document.getElementById('field-rating');
+    var commentEl = document.getElementById('field-comment');
+    var coverEl = document.getElementById('field-cover');
+    var saveBtn = document.getElementById('save-btn');
+    var cancelBtn = document.getElementById('cancel-btn');
+    var genreInput = document.getElementById('genre-input');
+    var addGenreBtn = document.getElementById('add-genre-btn');
+    var genreContainer = document.getElementById('genre-container');
+    var ratingError = document.getElementById('rating-error');
+    var progressError = document.getElementById('progress-error');
+
+    if (!form || !saveBtn) return;
+
+    var genres = editData.fields.genre.slice();
+
+    function bindGenreRemoves() {
+      var btns = genreContainer.querySelectorAll('[data-remove-genre]');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function() {
+          var g = this.getAttribute('data-remove-genre');
+          genres = genres.filter(function(genre) { return genre !== g; });
+          renderGenreTags();
+        });
+      }
+    }
+
+    function renderGenreTags() {
+      var html = '';
+      for (var i = 0; i < genres.length; i++) {
+        html += '<span class="form-chip" data-genre="' + genres[i] + '">' + genres[i] + '<button type="button" data-remove-genre="' + genres[i] + '" aria-label="删除类型 ' + genres[i] + '">&times;</button></span>';
+      }
+      genreContainer.innerHTML = html;
+      bindGenreRemoves();
+    }
+
+    function addGenre() {
+      var val = genreInput.value.trim().toLowerCase();
+      if (val && genres.indexOf(val) === -1) {
+        genres.push(val);
+        renderGenreTags();
+      }
+      genreInput.value = '';
+      genreInput.focus();
+    }
+
+    function loadDraft() {
+      try {
+        var stored = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+        var saved = stored['anime:' + editData.fields.titleCn];
+        if (saved) {
+          if (saved.status) statusEl.value = saved.status;
+          if (saved.progress != null) progressEl.value = saved.progress;
+          if (saved.myRating != null) ratingEl.value = saved.myRating;
+          if (saved.comment != null) commentEl.value = saved.comment;
+          if (saved.cover != null) coverEl.value = saved.cover;
+          if (saved.genre) { genres = saved.genre.slice(); renderGenreTags(); }
+        }
+      } catch (_) {}
+    }
+
+    function validate() {
+      var valid = true;
+
+      var rv = ratingEl.value.trim();
+      if (rv !== '') {
+        var rn = Number(rv);
+        if (!Number.isInteger(rn) || rn < 0 || rn > 10) {
+          ratingEl.classList.add('error');
+          ratingError.classList.remove('hidden');
+          valid = false;
+        } else {
+          ratingEl.classList.remove('error');
+          ratingError.classList.add('hidden');
+        }
+      } else {
+        ratingEl.classList.remove('error');
+        ratingError.classList.add('hidden');
+      }
+
+      var pv = progressEl.value.trim();
+      if (pv !== '') {
+        var pn = Number(pv);
+        if (isNaN(pn) || pn < 0) {
+          progressEl.classList.add('error');
+          progressError.classList.remove('hidden');
+          valid = false;
+        } else {
+          progressEl.classList.remove('error');
+          progressError.classList.add('hidden');
+        }
+      } else {
+        progressEl.classList.remove('error');
+        progressError.classList.add('hidden');
+      }
+
+      saveBtn.disabled = !valid;
+      return valid;
+    }
+
+    function save() {
+      if (!validate()) return;
+      try {
+        var fields = {
+          status: statusEl.value,
+          progress: progressEl.value === '' ? editData.fields.progress : Number(progressEl.value),
+          myRating: ratingEl.value === '' ? '' : Number(ratingEl.value),
+          comment: commentEl.value,
+          cover: coverEl.value,
+          genre: genres,
+        };
+        var stored = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}');
+        stored['anime:' + editData.fields.titleCn] = fields;
+        localStorage.setItem(EDIT_KEY, JSON.stringify(stored));
+        window.location.href = '/admin';
+      } catch (e) {
+        alert('保存失败: ' + e.message);
+      }
+    }
+
+    addGenreBtn.addEventListener('click', addGenre);
+    genreInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); addGenre(); } });
+
+    form.addEventListener('submit', function(e) { e.preventDefault(); save(); });
+    cancelBtn.addEventListener('click', function() { window.location.href = '/admin'; });
+    ratingEl.addEventListener('input', validate);
+    progressEl.addEventListener('input', validate);
+
+    loadDraft();
+    bindGenreRemoves();
+    validate();
+  })();
+</script>

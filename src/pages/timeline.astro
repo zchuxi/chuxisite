@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getAllTools, slugOf as toolsSlugOf } from '../lib/tools';
+import { getAllAnime, slugOf as animeSlugOf } from '../lib/anime';
+
+const tools = await getAllTools();
+const anime = await getAllAnime();
+const entries = [
+  ...tools.map((t) => ({
+    type: 'tool' as const,
+    title: t.data.title,
+    href: `/tools/${toolsSlugOf(t.data.title)}`,
+    summary: t.data.summary,
+    category: t.data.category,
+  })),
+  ...anime.map((a) => ({
+    type: 'anime' as const,
+    title: a.data.titleCn,
+    href: `/anime/${animeSlugOf(a.data.titleCn)}`,
+    summary: a.data.comment || '',
+    category: a.data.status,
+  })),
+];
+---
+
+<BaseLayout title="最近更新" description="工具库与追番记录的最近动态">
+  <Header />
+  <main class="mx-auto max-w-2xl px-4 py-12 md:px-6">
+    <h1 class="font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--color-text)]">
+      最近更新
+    </h1>
+    <p class="mt-2 text-sm text-[var(--color-text-muted)]">共 {entries.length} 条记录</p>
+
+    <div class="mt-8 flex flex-col gap-4">
+      {entries.map((e) => (
+        <a
+          href={e.href}
+          class="block rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition hover:border-[var(--color-primary)]"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="inline-block rounded-full bg-[var(--color-surface-muted)] px-2 py-0.5 text-xs text-[var(--color-text-muted)]">
+                {e.type === 'tool' ? '工具' : '番剧'}
+              </span>
+              <span class="ml-2 text-xs text-[var(--color-text-muted)]">{e.category}</span>
+            </div>
+          </div>
+          <h2 class="mt-1 font-[family-name:var(--font-display)] text-lg font-semibold text-[var(--color-text)]">
+            {e.title}
+          </h2>
+          {e.summary && (
+            <p class="mt-1 text-sm text-[var(--color-text-muted)] line-clamp-2">{e.summary}</p>
+          )}
+        </a>
+      ))}
+    </div>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>

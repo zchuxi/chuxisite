@@ -30,3 +30,9 @@ export async function getAnimeByStatus(
     (a) => a.data.status === status && slugOf(a.data.titleCn) !== opts.excludeSlug,
   );
 }
+
+// 按 genre 筛选：入参与 schema transform lowercase 对齐。
+export async function getAnimeByGenre(genre: string) {
+  const target = genre.toLowerCase();
+  return (await getAllAnime()).filter((a) => a.data.genre.includes(target));
+}

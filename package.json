@@ -9,10 +9,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "bangumi": "node scripts/fetch-bangumi.mjs",
+    "bangumi:write": "node scripts/fetch-bangumi.mjs --write",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.3",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/fredoka": "^5.2.10",
     "@fontsource/zcool-kuaile": "^5.2.8",

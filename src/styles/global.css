@@ -181,4 +181,133 @@ body {
   @media (prefers-reduced-motion: reduce) {
     .admin-tab, .admin-delete-btn { transition: none; }
   }
+
+  /* ---------- Admin: 编辑表单 ---------- */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 150ms;
+  }
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: var(--color-primary);
+  }
+  .form-input.error,
+  .form-select.error,
+  .form-textarea.error {
+    border-color: var(--color-destructive);
+  }
+  .form-error {
+    font-size: 0.8125rem;
+    color: var(--color-destructive);
+    font-weight: 500;
+  }
+  .form-hint {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+  .form-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    padding: 0.25rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+  .form-chip button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 150ms;
+  }
+  .form-chip button:hover {
+    background-color: rgba(0,0,0,0.2);
+  }
+  .form-preview {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    padding: 1rem;
+    min-height: 4rem;
+  }
+  .admin-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    transition: color 150ms;
+  }
+  .admin-back-link:hover {
+    color: var(--color-primary);
+  }
+
+  /* ---------- Admin: 已编辑标记 ---------- */
+  .edit-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 2.75rem;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    font-size: 0.75rem;
+    line-height: 1;
+    box-shadow: var(--shadow-soft);
+    pointer-events: none;
+  }
+
+  /* ---------- Admin: 新增条目 ---------- */
+  .slug-input {
+    font-family: ui-monospace, monospace;
+    font-size: 0.875rem;
+  }
+  .preview-panel {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-muted);
+    padding: 1rem;
+    max-height: 24rem;
+    overflow: auto;
+  }
+  .preview-panel pre {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
 }
