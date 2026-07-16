@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import AnimeCard from '../../components/AnimeCard.astro';
+import EntryCard from '../../components/EntryCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { Icon } from 'astro-icon/components';
+import { getAllAnime, slugOf as animeSlugOf } from '../../lib/anime';
+import { getAllTools, slugOf as toolsSlugOf } from '../../lib/tools';
+
+const anime = await getAllAnime();
+const tools = await getAllTools();
+
+// 极简数据（仅 4 个字符串字段，不传 Content Entry / render / image / Date — define:vars 不可序列化）
+const adminItems = [
+  ...anime.map((a) => ({
+    id: a.id,
+    type: 'anime',
+    slug: animeSlugOf(a.data.titleCn),
+    title: a.data.titleCn,
+  })),
+  ...tools.map((t) => ({
+    id: t.id,
+    type: 'tools',
+    slug: toolsSlugOf(t.data.title),
+    title: t.data.title,
+  })),
+];
+---
+
+<BaseLayout title="管理后台" description="内容编辑（需密码）">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <!-- ========== 密码视图 ========== -->
+    <div id="pw-view" class="mx-auto max-w-md">
+      <form id="pw-form" class="mt-12 flex flex-col gap-5">
+        <label
+          for="pw-input"
+          class="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]"
+        >
+          管理密码
+        </label>
+        <input
+          id="pw-input"
+          type="password"
+          required
+          autocomplete="current-password"
+          class="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] shadow-[var(--shadow-soft)] outline-none transition focus:border-[var(--color-primary)]"
+        />
+        <button
+          type="submit"
+          class="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-6 font-semibold text-[var(--color-primary-fg)] transition hover:bg-[var(--color-primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
+        >
+          进入
+        </button>
+        <p
+          id="pw-error"
+          role="alert"
+          class="hidden rounded-[var(--radius-md)] border border-[var(--color-destructive)] bg-[var(--color-surface)] px-4 py-2.5 text-sm font-semibold text-[var(--color-destructive)]"
+        >
+          密码错误，请重试
+        </p>
+      </form>
+    </div>
+
+    <!-- ========== 工作台视图 ========== -->
+    <div id="dashboard" class="hidden">
+      <div class="flex items-center gap-3">
+        <button
+          data-tab="anime"
+          aria-selected="true"
+          class="admin-tab"
+        >
+          追番 ({anime.length})
+        </button>
+        <button
+          data-tab="tools"
+          aria-selected="false"
+          class="admin-tab"
+        >
+          工具 ({tools.length})
+        </button>
+      </div>
+
+      <!-- 追番网格 -->
+      <section data-grid="anime" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {anime.length === 0 ? (
+          <EmptyState heading="追番清单还空空如也～" body="还没有录入任何番剧" />
+        ) : (
+          anime.map((a) => (
+            <div class="relative">
+              <AnimeCard
+                href={`#edit/anime/${animeSlugOf(a.data.titleCn)}`}
+                cover={a.data.cover}
+                titleCn={a.data.titleCn}
+                status={a.data.status}
+                myRating={a.data.myRating}
+                progress={a.data.progress}
+                episodes={a.data.episodes}
+              />
+              <button
+                type="button"
+                data-delete={a.id}
+                data-type="anime"
+                aria-label={`删除 ${a.data.titleCn}`}
+                class="admin-delete-btn absolute bottom-2 right-2 z-20 grid size-9 place-items-center rounded-full"
+              >
+                <Icon name="ph:trash" class="size-4" aria-hidden="true" />
+              </button>
+            </div>
+          ))
+        )}
+      </section>
+
+      <!-- 工具网格 -->
+      <section data-grid="tools" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8" hidden>
+        {tools.length === 0 ? (
+          <EmptyState heading="工具库还空空如也～" body="还没有收录任何工具" />
+        ) : (
+          tools.map((t) => (
+            <div class="relative">
+              <EntryCard
+                href={`#edit/tools/${toolsSlugOf(t.data.title)}`}
+                icon="ph:wrench"
+                title={t.data.title}
+                description={t.data.summary}
+              />
+              <button
+                type="button"
+                data-delete={t.id}
+                data-type="tools"
+                aria-label={`删除 ${t.data.title}`}
+                class="admin-delete-btn absolute bottom-2 right-2 z-20 grid size-9 place-items-center rounded-full"
+              >
+                <Icon name="ph:trash" class="size-4" aria-hidden="true" />
+              </button>
+            </div>
+          ))
+        )}
+      </section>
+    </div>
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script define:vars={{ adminItems }}>
+  // 硬编码密码（D-03 决策：单人站 + 公开只读站点，防偶然访问）
+  const PW = 'chuxi-admin-2026';
+  const SESSION_KEY = 'chuxi_admin_session';
+  const DELETED_KEY = 'chuxi_admin_deleted_v1';
+
+  const pwView = document.getElementById('pw-view');
+  const dashboard = document.getElementById('dashboard');
+  const pwForm = document.getElementById('pw-form');
+  const pwInput = document.getElementById('pw-input');
+  const pwError = document.getElementById('pw-error');
+
+  function isAuthed() {
+    return localStorage.getItem(SESSION_KEY) === '1';
+  }
+  function getDeleted() {
+    return new Set(JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'));
+  }
+  function setDeleted(set) {
+    localStorage.setItem(DELETED_KEY, JSON.stringify([...set]));
+  }
+  function renderView() {
+    const authed = isAuthed();
+    pwView.classList.toggle('hidden', authed);
+    dashboard.classList.toggle('hidden', !authed);
+  }
+
+  pwForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = pwInput.value;
+    if (val === PW) {
+      localStorage.setItem(SESSION_KEY, '1');
+      pwError.classList.add('hidden');
+      pwInput.value = '';
+      renderView();
+    } else {
+      pwError.classList.remove('hidden');
+      pwInput.select();
+    }
+  });
+
+  document.querySelectorAll('[data-tab]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('[data-grid]').forEach((g) => {
+        g.classList.toggle('hidden', g.dataset.grid !== tab);
+      });
+      document.querySelectorAll('[data-tab]').forEach((b) => {
+        b.setAttribute('aria-selected', String(b === btn));
+      });
+    });
+  });
+
+  // 事件委托：删除按钮（不冒泡进整卡 <a>）
+  dashboard.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-delete]');
+    if (!btn) return;
+    e.preventDefault();
+    const { delete: id, type } = btn.dataset;
+    const item = adminItems.find((i) => i.id === id && i.type === type);
+    if (
+      item &&
+      window.confirm(
+        `确认删除「${item.title}」？此操作将移出导出列表，可在 Phase 7 导出不含本条目的 JSON。`
+      )
+    ) {
+      btn.closest('.relative')?.classList.add('hidden');
+      const del = getDeleted();
+      del.add(`${type}:${id}`);
+      setDeleted(del);
+    }
+  });
+
+  // 初始化：视图切换 + 刷新后视觉保持删除状态
+  renderView();
+  getDeleted().forEach((key) => {
+    const [type, id] = key.split(':');
+    dashboard
+      .querySelector(`[data-delete="${id}"][data-type="${type}"]`)
+      ?.closest('.relative')
+      ?.classList.add('hidden');
+  });
+</script>
