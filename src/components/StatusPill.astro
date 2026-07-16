@@ -1,0 +1,39 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// 状态小标签：纯视觉（不进入整卡 <a> 嵌套，由 AnimeCard 用 wrapper 决定 absolute 位置）。
+// color-mix 染底 与 EntryCard badge 同范式；文本 Copywriting 锁定。
+interface Props {
+  status: 'watching' | 'done' | 'plan';
+  showIcon?: boolean;
+}
+const { status, showIcon = false } = Astro.props;
+
+const label: Record<typeof status, string> = {
+  watching: '在看',
+  done: '做完',
+  plan: '想看',
+};
+
+const token: Record<typeof status, string> = {
+  watching: 'var(--color-primary)',
+  done: 'var(--color-success)',
+  plan: 'var(--color-deco-pink)',
+};
+
+const iconName: Record<typeof status, string> = {
+  watching: 'ph:star',
+  done: 'ph:check-circle',
+  plan: 'ph:heart',
+};
+
+const t = token[status];
+---
+
+<span
+  class="inline-flex items-center gap-1 rounded-[var(--radius-sm)] px-2 py-0.5 text-xs font-semibold shadow-sm"
+  style={`background: color-mix(in oklab, ${t} 14%, transparent); color: ${t};`}
+>
+  {showIcon && <Icon name={iconName[status]} class="size-3" aria-hidden="true" />}
+  {label[status]}
+</span>
