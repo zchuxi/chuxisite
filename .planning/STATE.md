@@ -36,9 +36,9 @@ Last activity: 2026-07-16 — Milestone v1.0 completed and archived
 
 | Metric | Value |
 |--------|-------|
-| Phases complete | 0/3 |
-| Requirements delivered | 0/17 |
-| Current phase | 1 — 站点地基与二次元外壳 |
+| Phases complete | 3/3 |
+| Requirements delivered | 17/17 |
+| Current milestone | v1.0 站点地基与基础框架 — shipped 2026-07-16 |
 
 ## Accumulated Context
 
