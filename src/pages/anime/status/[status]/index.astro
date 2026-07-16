@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import Breadcrumb from '../../../../components/Breadcrumb.astro';
+import PillRow from '../../../../components/PillRow.astro';
+import EmptyState from '../../../../components/EmptyState.astro';
+import AnimeCard from '../../../../components/AnimeCard.astro';
+import { getAnimeByStatus, slugOf } from '../../../../lib/anime';
+
+const STATUSES = ['watching', 'done', 'plan'] as const;
+type Status = (typeof STATUSES)[number];
+
+const STATUS_LABEL: Record<Status, string> = { watching: '在看', done: '做完', plan: '想看' };
+
+export async function getStaticPaths() {
+  return ['watching', 'done', 'plan'].map((status) => ({
+    params: { status },
+    props: { status },
+  }));
+}
+
+const { status } = Astro.props as { status: Status };
+const items = await getAnimeByStatus(status);
+const label = STATUS_LABEL[status];
+---
+
+<BaseLayout
+  title={`${label} · 追番记录`}
+  description={`${label}状态下的番剧列表（${items.length} 部）`}
+>
+  <Header />
+  <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
+    <Breadcrumb
+      items={[
+        { href: '/', label: '首页' },
+        { href: '/anime', label: '追番' },
+        { label: label },
+      ]}
+    />
+
+    <PillRow
+      class="mt-8"
+      pills={[
+        { href: '/anime', label: '全部', active: false },
+        ...STATUSES.map((s) => ({
+          href: `/anime/status/${s}`,
+          label: STATUS_LABEL[s],
+          active: s === status,
+        })),
+      ]}
+    />
+
+    <h1 class="mt-8 font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--color-text)]">
+      {label} · 追番记录
+    </h1>
+    <p class="mt-2 text-sm text-[var(--color-text-muted)]">（{items.length} 部）</p>
+
+    {items.length === 0 ? (
+      <EmptyState
+        heading={`「${label}」状态下暂无番剧 (｡•́︿•̀｡)`}
+        body="这个列表下暂时是空的，先去别的状态逛逛～"
+        ctaHref="/anime"
+        ctaLabel="返回追番列表"
+      />
+    ) : (
+      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+        {items.map((a) => (
+          <AnimeCard
+            href={`/anime/${slugOf(a.data.titleCn)}`}
+            cover={a.data.cover}
+            titleCn={a.data.titleCn}
+            status={a.data.status}
+            myRating={a.data.myRating}
+            progress={a.data.progress}
+            episodes={a.data.episodes}
+          />
+        ))}
+      </section>
+    )}
+  </main>
+  <div class="mt-24">
+    <Footer />
+  </div>
+</BaseLayout>
