@@ -130,3 +130,55 @@ body {
   .star-empty { color: var(--color-border); }
   .rating-num { color: var(--color-text-muted); font-size: 0.8125rem; }
 }
+
+/* ---------- Admin: Tab 按钮 ---------- */
+@layer components {
+  .admin-tab {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    border-radius: var(--radius-full);
+    padding-inline: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: color 150ms, background-color 150ms, border-color 150ms;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+  .admin-tab:hover { color: var(--color-primary); border-color: var(--color-primary); }
+  .admin-tab:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  /* aria-selected=true → filled primary */
+  .admin-tab[aria-selected='true'] {
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    border-color: var(--color-primary);
+  }
+
+  /* ---------- Admin: 卡片删除按钮 ---------- */
+  .admin-delete-btn {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background-color: color-mix(in oklab, var(--color-surface) 90%, transparent);
+    color: var(--color-destructive);
+    box-shadow: var(--shadow-soft);
+    transition: color 150ms, background-color 150ms;
+  }
+  .admin-delete-btn:hover {
+    background-color: var(--color-destructive);
+    color: var(--color-primary-fg);
+  }
+  .admin-delete-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-destructive);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .admin-tab, .admin-delete-btn { transition: none; }
+  }
+}
