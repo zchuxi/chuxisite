@@ -33,6 +33,7 @@ const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating
         <input
           id="anime-search"
           type="search"
+          aria-label="搜索番剧"
           placeholder="搜番名 / 类型…"
           class="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] py-3 pl-10 pr-4 text-[var(--color-text)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
         />
@@ -97,7 +98,7 @@ const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating
         ctaLabel="回到首页"
       />
     ) : (
-      <section id="anime-grid" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section id="anime-grid" class="stagger-in mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {items.map((a) => (
           <AnimeCard
             href={`/anime/${slugOf(a.data.titleCn)}`}

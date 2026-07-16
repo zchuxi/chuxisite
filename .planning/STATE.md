@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: 内容增强与发现
+milestone: v1.3
+milestone_name: 内容质量打磨
 status: completed
-last_updated: 2026-07-16T21:10:00.000Z
-last_activity: 2026-07-16 -- Phase 15 (客户端搜索与筛选) execution completed
+last_updated: 2026-07-16T21:20:00.000Z
+last_activity: 2026-07-16 -- Phase 16 (内容质量打磨) execution completed
 progress:
-  total_phases: 15
-  completed_phases: 15
-  total_plans: 23
-  completed_plans: 23
+  total_phases: 16
+  completed_phases: 16
+  total_plans: 24
+  completed_plans: 24
   percent: 100
-stopped_at: v1.2 all phases complete (8-15)
+stopped_at: v1.3 all phases complete (16)
 ---
 
 # Project State
@@ -24,14 +24,15 @@ stopped_at: v1.2 all phases complete (8-15)
 - **Core Value:** 工具库要好用——能清晰地分类、浏览、快速找到之前记录的工具，并为每个工具保留可长可短的图文说明
 - **v1.1 Editing Value:** 维护内容应像浏览内容一样简单——在站内编辑、导出 JSON、放进 content/、git push，链路不断
 - **v1.2 Discovery Value:** 内容多了要能快速找到——客户端即时搜索、类型聚合、统计概览、内容流订阅
-- **Current Focus:** v1.2 已全部完成 — 下一里程碑待定义
+- **v1.3 Polish Value:** 让站点看起来「有内容、有质感、可分享」——首页聚合、社交分享图、动效与无障碍细节
+- **Current Focus:** v1.3 已全部完成 — 下一里程碑待定义
 - **Mode:** mvp（垂直 MVP）
 - **Stack:** Astro 7.0.9 + Tailwind v4 (@tailwindcss/vite, CSS-first @theme) + @astrojs/mdx + @astrojs/sitemap + @astrojs/rss 静态部署 Vercel
 
 ## Current Position
 
 Phase: — (all delivered)
-Status: v1.2 milestone complete
+Status: v1.3 milestone complete
 Last activity: 2026-07-16
 
 ## Performance Metrics
@@ -41,10 +42,11 @@ Last activity: 2026-07-16
 | Phases complete (v1.0) | 3/3 |
 | Phases complete (v1.1) | 4/4 |
 | Phases complete (v1.2) | 8/8 |
+| Phases complete (v1.3) | 1/1 |
 | Requirements delivered (v1.0) | 17/17 |
 | Requirements delivered (v1.1) | 8/8 |
 | Requirements delivered (v1.2) | 8/8 |
-| Current milestone | v1.2 内容增强与发现 |
+| Current milestone | v1.3 内容质量打磨 |
 
 ## Accumulated Context
 
@@ -112,17 +114,25 @@ Last activity: 2026-07-16
 - [15-01] 工具库/番剧首页客户端即时搜索：EntryCard/AnimeCard 加 `data-search` 属性，原生 `<script>` 按 `includes` 过滤，零框架
 - [15-02] 搜索匹配范围：工具=标题+描述+标签+分类；番剧=中文名+日文名+类型
 
+### v1.3 Key Decisions
+
+- [16-01] 首页新增「最新收录的工具」「最近在追的番」预览区块，各取前 3 条 + 查看全部链接，直接体现核心内容
+- [16-02] 详情页 BaseLayout 传 `ogImage`：cover 为字符串 URL 时用作社交分享图，否则回退 `/og-default.png`
+- [16-03] Lightbox 加 `role="dialog"` + `aria-modal="true"` + `aria-label`，提升屏幕阅读器可访问性
+- [16-04] 列表网格加 `.stagger-in` 入场动画（opacity/translateY，nth-child 递增延迟），`@media (prefers-reduced-motion: reduce)` 关闭
+- [16-05] 工具/番剧搜索框加 `aria-label`
+
 ### Open Questions
 
 - Bangumi API 具体字段（collection.status 枚举 / rating 结构）在未来集成阶段二次核对
 - 内容规模拐点（何时上 Pagefind 全文搜索）待实际增长评估
-- 搜索与静态分类/标签页的组合联动（SEARCH-02 完整版）可后续增强，v1.2 先做客户端即时过滤
+- 搜索与静态分类/标签页的组合联动（SEARCH-02 完整版）可后续增强
 
 ## Session Continuity
 
-**Last session:** 2026-07-16T21:10:00.000Z
+**Last session:** 2026-07-16T21:20:00.000Z
 
-**Next action:** 讨论下一里程碑（v1.3）内容，或针对现有功能做打磨
+**Next action:** 讨论下一里程碑（v1.4）内容，或针对现有功能做进一步打磨
 
 ---
 

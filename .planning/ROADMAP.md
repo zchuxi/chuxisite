@@ -2,7 +2,7 @@
 
 **Created:** 2026-07-14
 **Last shipped:** 2026-07-16 (v1.0)
-**Current Milestone:** v1.2 内容增强与发现
+**Current Milestone:** v1.3 内容质量打磨
 **Granularity:** coarse
 **Mode:** mvp（垂直 MVP，每阶段交付端到端可用能力）
 **Core Value:** 工具库要好用——能清晰地分类、浏览、快速找到之前记录的工具，并为每个工具保留可长可短的图文说明
@@ -13,6 +13,7 @@
 - ✅ **v1.0 站点地基与基础框架** — Phases 1-3 (shipped 2026-07-16)
 - ✅ **v1.1 内容编辑 UI** — Phases 4-7 (shipped 2026-07-16)
 - ✅ **v1.2 内容增强与发现** — Phases 8-15 (shipped 2026-07-16)
+- ✅ **v1.3 内容质量打磨** — Phase 16 (shipped 2026-07-16)
 
 ## Phases
 
@@ -46,6 +47,10 @@
 - [x] **Phase 13: 图片功能（工具）** — tools schema `screenshots` 数组 + cover 支持 URL，详情页封面缩略图 + 截图画廊，后台表单截图 URL 文本框 (completed 2026-07-16)
 - [x] **Phase 14: 图片功能（番剧）+ 灯箱** — anime schema `screenshots`、番剧详情截图画廊、可复用 `Lightbox.astro` 点击放大（工具/番剧通用），后台表单同步 (completed 2026-07-16)
 - [x] **Phase 15: 客户端搜索与筛选** — 工具库/追番首页即时文本搜索（标题/描述/标签/分类/类型），零框架原生 `<script>` 过滤，无匹配空态 (SEARCH-01/02) (completed 2026-07-16)
+
+### v1.3 — 内容质量打磨
+
+- [x] **Phase 16: 质量打磨** — 首页聚合预览（最新工具/最近追番）、详情页 og:image 用封面、灯箱 a11y（role=dialog/aria-modal）、列表卡片入场动画（尊重 reduced-motion）、搜索框 aria-label (completed 2026-07-16)
 
 ## Phase Details
 
@@ -119,6 +124,7 @@
 | 13. 图片功能（工具） | v1.2 | 1/1 | Complete | 2026-07-16 |
 | 14. 图片功能（番剧）+ 灯箱 | v1.2 | 1/1 | Complete | 2026-07-16 |
 | 15. 客户端搜索与筛选 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 16. 内容质量打磨 | v1.3 | 1/1 | Complete | 2026-07-16 |
 
 ## Coverage
 

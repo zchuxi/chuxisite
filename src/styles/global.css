@@ -254,9 +254,26 @@ body {
   .form-preview {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background-color: var(--color-surface);
+    background-color: var(--color-surface-muted);
     padding: 1rem;
     min-height: 4rem;
+  }
+
+  /* ---------- 列表卡片入场动画（尊重 reduced-motion） ---------- */
+  .stagger-in > * {
+    animation: stagger-in 0.4s ease-out both;
+  }
+  .stagger-in > *:nth-child(2) { animation-delay: 0.05s; }
+  .stagger-in > *:nth-child(3) { animation-delay: 0.1s; }
+  .stagger-in > *:nth-child(4) { animation-delay: 0.15s; }
+  .stagger-in > *:nth-child(5) { animation-delay: 0.2s; }
+  .stagger-in > *:nth-child(n + 6) { animation-delay: 0.25s; }
+  @keyframes stagger-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-in > * { animation: none; }
   }
   .admin-back-link {
     display: inline-flex;

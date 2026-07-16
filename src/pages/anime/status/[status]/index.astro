@@ -83,7 +83,7 @@ const genres = [...genreCounts.entries()].sort((a, b) => b[1] - a[1]);
         ctaLabel="返回追番列表"
       />
     ) : (
-      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section class="stagger-in mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {items.map((a) => (
           <AnimeCard
             href={`/anime/${slugOf(a.data.titleCn)}`}

@@ -44,7 +44,7 @@ const { entries, genre } = Astro.props as { entries: CollectionEntry<'anime'>[];
     {entries.length === 0 ? (
       <EmptyState heading="还没有这个类型的番剧" body="先去看点新番吧 🎬" />
     ) : (
-      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section class="stagger-in mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {entries.map((a) => (
           <AnimeCard
             href={`/anime/${encodeURIComponent(a.data.titleCn)}`}

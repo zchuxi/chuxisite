@@ -68,7 +68,7 @@ const tags = [...tagCounts.entries()]
         ctaLabel="返回工具库"
       />
     ) : (
-      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section class="stagger-in mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {items.map((t) => (
           <EntryCard
             href={`/tools/${slugOf(t.data.title)}`}

@@ -38,13 +38,14 @@ const mdxEmpty = !entry.body?.trim();
 const airDateStr = airDate?.toISOString().slice(0, 10);
 
 const hasCover = cover != null && cover !== '';
+const ogImage = typeof cover === 'string' ? cover : '/og-default.png';
 
 const statusLabelMap = { watching: '在看', done: '做完', plan: '想看' } as const;
 const description =
   comment ?? `${titleCn}，状态 ${statusLabelMap[status]}${myRating != null && myRating > 0 ? `，评分 ${myRating}/10` : ''}`;
 ---
 
-<BaseLayout title={`${titleCn} · 追番记录`} description={description}>
+<BaseLayout title={`${titleCn} · 追番记录`} description={description} ogImage={ogImage}>
   <Header />
   <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
     <Breadcrumb

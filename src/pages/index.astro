@@ -4,13 +4,16 @@ import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import IntroBlock from '../components/IntroBlock.astro';
 import EntryCard from '../components/EntryCard.astro';
+import AnimeCard from '../components/AnimeCard.astro';
 import Footer from '../components/Footer.astro';
-import { getAllTools } from '../lib/tools';
-import { getAllAnime } from '../lib/anime';
+import { getAllTools, slugOf as slugOfTool } from '../lib/tools';
+import { getAllAnime, slugOf as slugOfAnime } from '../lib/anime';
 
 // 经 lib 薄封装读取种子（不直接 getCollection），入口卡以徽章展示当前收录数，证 lib→schema→页面管道通。
 const tools = await getAllTools();
 const anime = await getAllAnime();
+const latestTools = tools.slice(0, 3);
+const recentAnime = anime.slice(0, 3);
 ---
 
 <BaseLayout fullTitle="初曦的窝 · 工具、番剧、和一点点生活">
@@ -37,6 +40,60 @@ const anime = await getAllAnime();
         badge={`${anime.length} 部番剧`}
       />
     </section>
+
+    {
+      latestTools.length > 0 && (
+        <section class="mx-auto mt-16 max-w-[72rem] px-4 md:px-6">
+          <div class="flex items-center justify-between">
+            <h2 class="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]">
+              最新收录的工具
+            </h2>
+            <a href="/tools" class="text-sm font-semibold text-[var(--color-primary)] transition hover:text-[var(--color-primary-hover)]">
+              查看全部 →
+            </a>
+          </div>
+          <div class="stagger-in mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+            {latestTools.map((t) => (
+              <EntryCard
+                href={`/tools/${slugOfTool(t.data.title)}`}
+                externalUrl={t.data.url}
+                icon="ph:wrench"
+                title={t.data.title}
+                description={t.data.summary}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      recentAnime.length > 0 && (
+        <section class="mx-auto mt-16 max-w-[72rem] px-4 md:px-6">
+          <div class="flex items-center justify-between">
+            <h2 class="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]">
+              最近在追的番
+            </h2>
+            <a href="/anime" class="text-sm font-semibold text-[var(--color-primary)] transition hover:text-[var(--color-primary-hover)]">
+              查看全部 →
+            </a>
+          </div>
+          <div class="stagger-in mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+            {recentAnime.map((a) => (
+              <AnimeCard
+                href={`/anime/${slugOfAnime(a.data.titleCn)}`}
+                cover={a.data.cover}
+                titleCn={a.data.titleCn}
+                status={a.data.status}
+                myRating={a.data.myRating}
+                progress={a.data.progress}
+                episodes={a.data.episodes}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
   </main>
   <Footer />
 </BaseLayout>

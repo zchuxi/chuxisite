@@ -29,9 +29,10 @@ const { Content } = await render(entry);
 const { title, url, summary, tags, category, cover, screenshots } = entry.data;
 const related = await getRelated(category, slugOf(title), 2);
 const hasCover = cover != null && cover !== '';
+const ogImage = typeof cover === 'string' ? cover : '/og-default.png';
 ---
 
-<BaseLayout title={`${title} · 工具库`} description={summary}>
+<BaseLayout title={`${title} · 工具库`} description={summary} ogImage={ogImage}>
   <Header />
   <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
     <Breadcrumb
