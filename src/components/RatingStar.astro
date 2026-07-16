@@ -1,0 +1,19 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// 卡片上精简数字评分（9/10）。aria-hidden —— 外层整卡 <a> aria-label 已含评分。
+// 5-star 视觉仅 03-03 AnimeDetailHero 渲染；卡片上精简数字足矣。
+interface Props {
+  value: number;
+}
+const { value } = Astro.props;
+---
+
+{
+  value > 0 && (
+    <span class="inline-flex items-center gap-0.5" aria-hidden="true">
+      <Icon name="ph:star" class="size-3.5 star-fill" />
+      <span class="rating-num">{value}/10</span>
+    </span>
+  )
+}
