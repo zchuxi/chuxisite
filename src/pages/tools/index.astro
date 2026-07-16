@@ -6,6 +6,7 @@ import EntryCard from '../../components/EntryCard.astro';
 import PillRow from '../../components/PillRow.astro';
 import TagCloud from '../../components/TagCloud.astro';
 import EmptyState from '../../components/EmptyState.astro';
+import { Icon } from 'astro-icon/components';
 import { getAllTools, slugOf } from '../../lib/tools';
 
 const tools = await getAllTools();
@@ -27,13 +28,23 @@ const tags = [...tagCounts.entries()]
     <p class="text-sm text-[var(--color-text-muted)]">共 {tools.length} 件工具 · 慢慢整理中～</p>
 
     {tools.length > 0 && (
-      <PillRow
-        class="mt-8"
-        pills={[
-          { href: '/tools', label: `全部工具（${tools.length}）`, active: true },
-          ...categories.map(([c, count]) => ({ href: `/tools/category/${encodeURIComponent(c)}`, label: `${c}（${count}）`, active: false })),
-        ]}
-      />
+      <div class="mt-8 flex flex-col gap-6">
+        <div class="relative max-w-md">
+          <Icon name="ph:magnifying-glass" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-[var(--color-text-muted)]" aria-hidden="true" />
+          <input
+            id="tool-search"
+            type="search"
+            placeholder="搜工具名 / 描述 / 标签…"
+            class="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] py-3 pl-10 pr-4 text-[var(--color-text)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+          />
+        </div>
+        <PillRow
+          pills={[
+            { href: '/tools', label: `全部工具（${tools.length}）`, active: true },
+            ...categories.map(([c, count]) => ({ href: `/tools/category/${encodeURIComponent(c)}`, label: `${c}（${count}）`, active: false })),
+          ]}
+        />
+      </div>
     )}
 
     <TagCloud
@@ -44,7 +55,7 @@ const tags = [...tagCounts.entries()]
     {tools.length === 0 ? (
       <EmptyState heading="这里还空空如也～" body="还没有收录任何工具，先去逛逛其他角落吧！" ctaHref="/" ctaLabel="回到首页" />
     ) : (
-      <section class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section id="tool-grid" class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {tools.map((t) => (
           <EntryCard
             href={`/tools/${slugOf(t.data.title)}`}
@@ -52,12 +63,38 @@ const tags = [...tagCounts.entries()]
             icon="ph:wrench"
             title={t.data.title}
             description={t.data.summary}
+            searchText={`${t.data.title} ${t.data.summary} ${t.data.tags.join(' ')} ${t.data.category}`}
           />
         ))}
       </section>
     )}
+
+    <p id="tool-empty" class="mt-12 hidden text-center text-[var(--color-text-muted)]">没有匹配的工具，换个关键词试试～</p>
   </main>
   <div class="mt-24">
     <Footer />
   </div>
 </BaseLayout>
+
+<script>
+  (function() {
+    var input = document.getElementById('tool-search');
+    var grid = document.getElementById('tool-grid');
+    var empty = document.getElementById('tool-empty');
+    if (!input || !grid || !empty) return;
+
+    var cards = Array.from(grid.querySelectorAll('[data-search]'));
+    var emptyEl = empty;
+    input.addEventListener('input', function() {
+      var q = (input as HTMLInputElement).value.trim().toLowerCase();
+      var visible = 0;
+      cards.forEach(function(card) {
+        var text = (card.getAttribute('data-search') || '').toLowerCase();
+        var match = q === '' || text.includes(q);
+        (card as HTMLElement).style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      emptyEl.classList.toggle('hidden', visible > 0);
+    });
+  })();
+</script>

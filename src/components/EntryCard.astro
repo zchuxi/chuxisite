@@ -11,11 +11,13 @@ interface Props {
   emphasis?: boolean;
   badge?: string;
   externalUrl?: string;  // 外链地址（真时渲染独立外链按钮）
+  searchText?: string;   // 客户端搜索可匹配的文本（title/summary/tags/category 拼接）
 }
-const { href, title, description, icon, emphasis = false, badge, externalUrl } = Astro.props;
+const { href, title, description, icon, emphasis = false, badge, externalUrl, searchText } = Astro.props;
 ---
 
 <article
+  data-search={searchText}
   class:list={[
     'group relative rounded-[var(--radius-xl)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] transition-transform duration-150 motion-safe:hover:-translate-y-0.5',
     emphasis ? 'border-2 border-[var(--color-primary)]' : 'border border-[var(--color-border)]',

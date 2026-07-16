@@ -17,8 +17,9 @@ interface Props {
   myRating?: number;
   progress?: number;
   episodes?: number;
+  searchText?: string;
 }
-const { href, cover, titleCn, status, myRating, progress = 0, episodes } = Astro.props;
+const { href, cover, titleCn, status, myRating, progress = 0, episodes, searchText } = Astro.props;
 
 const statusLabel: Record<string, string> = { watching: '在看', done: '做完', plan: '想看' };
 
@@ -36,6 +37,7 @@ const hasImage = cover != null && cover !== '';
 ---
 
 <article
+  data-search={searchText}
   class="group relative rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] transition-transform duration-150 motion-safe:hover:-translate-y-0.5 hover:border-[var(--color-primary)]"
 >
   <a

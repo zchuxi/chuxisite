@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import AnimeCard from '../../components/AnimeCard.astro';
 import PillRow from '../../components/PillRow.astro';
 import EmptyState from '../../components/EmptyState.astro';
+import { Icon } from 'astro-icon/components';
 import { getAllAnime, slugOf } from '../../lib/anime';
 
 const items = await getAllAnime();
@@ -25,6 +26,18 @@ const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating
   <Header />
   <main class="mx-auto max-w-[72rem] px-4 py-12 md:px-6">
     <p class="mt-4 text-sm text-[var(--color-text-muted)]">共 {items.length} 部 · 慢补番中～</p>
+
+    {items.length > 0 && (
+      <div class="relative mt-6 max-w-md">
+        <Icon name="ph:magnifying-glass" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-[var(--color-text-muted)]" aria-hidden="true" />
+        <input
+          id="anime-search"
+          type="search"
+          placeholder="搜番名 / 类型…"
+          class="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] py-3 pl-10 pr-4 text-[var(--color-text)] outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+        />
+      </div>
+    )}
 
     {items.length > 0 && (
       <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -84,7 +97,7 @@ const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating
         ctaLabel="回到首页"
       />
     ) : (
-      <section class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+      <section id="anime-grid" class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
         {items.map((a) => (
           <AnimeCard
             href={`/anime/${slugOf(a.data.titleCn)}`}
@@ -94,12 +107,38 @@ const avgRating = rated.length > 0 ? (rated.reduce((s, a) => s + a.data.myRating
             myRating={a.data.myRating}
             progress={a.data.progress}
             episodes={a.data.episodes}
+            searchText={`${a.data.titleCn} ${a.data.titleJa ?? ''} ${a.data.genre.join(' ')}`}
           />
         ))}
       </section>
     )}
+
+    <p id="anime-empty" class="mt-8 hidden text-center text-[var(--color-text-muted)]">没有匹配的番剧，换个关键词试试～</p>
   </main>
   <div class="mt-24">
     <Footer />
   </div>
 </BaseLayout>
+
+<script>
+  (function() {
+    var input = document.getElementById('anime-search');
+    var grid = document.getElementById('anime-grid');
+    var empty = document.getElementById('anime-empty');
+    if (!input || !grid || !empty) return;
+
+    var cards = Array.from(grid.querySelectorAll('[data-search]'));
+    var emptyEl = empty;
+    input.addEventListener('input', function() {
+      var q = (input as HTMLInputElement).value.trim().toLowerCase();
+      var visible = 0;
+      cards.forEach(function(card) {
+        var text = (card.getAttribute('data-search') || '').toLowerCase();
+        var match = q === '' || text.includes(q);
+        (card as HTMLElement).style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      emptyEl.classList.toggle('hidden', visible > 0);
+    });
+  })();
+</script>

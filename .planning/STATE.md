@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: 内容编辑 UI
+milestone: v1.2
+milestone_name: 内容增强与发现
 status: completed
-last_updated: 2026-07-16T12:15:00.000Z
-last_activity: 2026-07-16 -- Phase 7 execution completed
+last_updated: 2026-07-16T21:10:00.000Z
+last_activity: 2026-07-16 -- Phase 15 (客户端搜索与筛选) execution completed
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 15
-  completed_plans: 15
+  total_phases: 15
+  completed_phases: 15
+  total_plans: 23
+  completed_plans: 23
   percent: 100
-stopped_at: v1.1 all phases complete (7/7)
+stopped_at: v1.2 all phases complete (8-15)
 ---
 
 # Project State
@@ -23,14 +23,15 @@ stopped_at: v1.1 all phases complete (7/7)
 
 - **Core Value:** 工具库要好用——能清晰地分类、浏览、快速找到之前记录的工具，并为每个工具保留可长可短的图文说明
 - **v1.1 Editing Value:** 维护内容应像浏览内容一样简单——在站内编辑、导出 JSON、放进 content/、git push，链路不断
-- **Current Focus:** v1.1 已全部完成 — 下一里程碑待定义
+- **v1.2 Discovery Value:** 内容多了要能快速找到——客户端即时搜索、类型聚合、统计概览、内容流订阅
+- **Current Focus:** v1.2 已全部完成 — 下一里程碑待定义
 - **Mode:** mvp（垂直 MVP）
-- **Stack:** Astro 7.0.9 + Tailwind v4 (@tailwindcss/vite, CSS-first @theme) + @astrojs/mdx + @astrojs/sitemap 静态部署 Vercel
+- **Stack:** Astro 7.0.9 + Tailwind v4 (@tailwindcss/vite, CSS-first @theme) + @astrojs/mdx + @astrojs/sitemap + @astrojs/rss 静态部署 Vercel
 
 ## Current Position
 
 Phase: — (all delivered)
-Status: v1.1 milestone complete
+Status: v1.2 milestone complete
 Last activity: 2026-07-16
 
 ## Performance Metrics
@@ -39,9 +40,11 @@ Last activity: 2026-07-16
 |--------|-------|
 | Phases complete (v1.0) | 3/3 |
 | Phases complete (v1.1) | 4/4 |
+| Phases complete (v1.2) | 8/8 |
 | Requirements delivered (v1.0) | 17/17 |
 | Requirements delivered (v1.1) | 8/8 |
-| Current milestone | v1.1 内容编辑 UI |
+| Requirements delivered (v1.2) | 8/8 |
+| Current milestone | v1.2 内容增强与发现 |
 
 ## Accumulated Context
 
@@ -93,18 +96,33 @@ Last activity: 2026-07-16
 
 ### Blockers
 
-- [临时] 代理 127.0.0.1:7897 → GitHub schannel 握手持续失败（偶发抖动）。Phase 3 提交已在本地，待网络恢复后 push main。
+- (none)
+
+### v1.2 Key Decisions
+
+- [08-01] anime schema 增加 `genre: z.array(z.string()).default([])`（与 tools.tags 对齐），lib/anime.ts 增加 `getAnimeByGenre`
+- [08-02] 番剧详情页 genre 徽章链接到 `/anime/genre/[genre]` 归档页；anime 首页/状态页显示 genre pills
+- [09-01] `/admin/categories.astro` 列出分类 + 工具计数 + 编辑链接；admin 工作台「分类管理」入口
+- [10-01] 番剧首页统计卡片：总番数/在看/看完/想看/平均分（仅已评分计入）
+- [11-01] `@astrojs/rss` 已装；`/rss.xml.ts` 合并 tools+anime；`/timeline.astro` 时间线；footer 链接收录
+- [12-01] `scripts/fetch-bangumi.mjs` 读 bgmId → 拉封面/episodes/airDate/titleJa/genre；默认 dry-run，`--write` 应用到 content 文件
+- [13-01] tools schema `screenshots: z.array(z.union([image(), z.string().url()])).default([])`；详情页封面缩略图 + 截图画廊
+- [14-01] anime schema 增加 `screenshots` 字段（同 tools 结构）；详情页截图画廊
+- [14-02] `Lightbox.astro` 复用灯箱：监听 `img[data-lightbox]`，点击放大、ESC/点击遮罩关闭；工具与番剧详情通用
+- [15-01] 工具库/番剧首页客户端即时搜索：EntryCard/AnimeCard 加 `data-search` 属性，原生 `<script>` 按 `includes` 过滤，零框架
+- [15-02] 搜索匹配范围：工具=标题+描述+标签+分类；番剧=中文名+日文名+类型
 
 ### Open Questions
 
 - Bangumi API 具体字段（collection.status 枚举 / rating 结构）在未来集成阶段二次核对
 - 内容规模拐点（何时上 Pagefind 全文搜索）待实际增长评估
+- 搜索与静态分类/标签页的组合联动（SEARCH-02 完整版）可后续增强，v1.2 先做客户端即时过滤
 
 ## Session Continuity
 
-**Last session:** 2026-07-16T11:49:00.000Z
+**Last session:** 2026-07-16T21:10:00.000Z
 
-**Next action:** 讨论下一里程碑（v1.2）内容
+**Next action:** 讨论下一里程碑（v1.3）内容，或针对现有功能做打磨
 
 ---
 

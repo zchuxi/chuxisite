@@ -2,7 +2,7 @@
 
 **Created:** 2026-07-14
 **Last shipped:** 2026-07-16 (v1.0)
-**Current Milestone:** v1.1 内容编辑 UI
+**Current Milestone:** v1.2 内容增强与发现
 **Granularity:** coarse
 **Mode:** mvp（垂直 MVP，每阶段交付端到端可用能力）
 **Core Value:** 工具库要好用——能清晰地分类、浏览、快速找到之前记录的工具，并为每个工具保留可长可短的图文说明
@@ -12,6 +12,7 @@
 
 - ✅ **v1.0 站点地基与基础框架** — Phases 1-3 (shipped 2026-07-16)
 - ✅ **v1.1 内容编辑 UI** — Phases 4-7 (shipped 2026-07-16)
+- ✅ **v1.2 内容增强与发现** — Phases 8-15 (shipped 2026-07-16)
 
 ## Phases
 
@@ -32,6 +33,19 @@
 - [x] **Phase 5: 编辑已有条目（追番 + 工具）** — 表单回填、校验、状态/进度/评分/短评/封面、名称/描述/链接/标签/分类/正文 (completed 2026-07-16)
 - [x] **Phase 6: 新增条目 + frontmatter 生成** — 追番/新工具表单、必填校验、slug 派生、Zod schema 对齐的 frontmatter 自动产出 (completed 2026-07-16)
 - [x] **Phase 7: JSON 导出 + 端到端验证** — schema 兼容 JSON 下载、放进 src/content/ 后构建通过 (completed 2026-07-16)
+
+</details>
+
+### v1.2 — 内容增强与发现
+
+- [x] **Phase 8: 番剧类型（genre）** — schema 增加 genre 数组、详情页类型徽章、按类型归档页 `/anime/genre/[genre]` (completed 2026-07-16)
+- [x] **Phase 9: 工具分类完善** — `/admin/categories` 分类管理、工具库首页 PillRow 显示分类计数 (completed 2026-07-16)
+- [x] **Phase 10: 追番统计** — 番剧首页统计卡片（总番数/在看/看完/想看/平均分）(completed 2026-07-16)
+- [x] **Phase 11: 内容流** — `/rss.xml` 合并订阅、`/timeline` 时间线页、页脚最近更新/RSS 入口 (completed 2026-07-16)
+- [x] **Phase 12: Bangumi 集成** — `scripts/fetch-bangumi.mjs` 按 bgmId 拉取封面/集数/开播日/类型，dry-run 默认、`--write` 应用 (completed 2026-07-16)
+- [x] **Phase 13: 图片功能（工具）** — tools schema `screenshots` 数组 + cover 支持 URL，详情页封面缩略图 + 截图画廊，后台表单截图 URL 文本框 (completed 2026-07-16)
+- [x] **Phase 14: 图片功能（番剧）+ 灯箱** — anime schema `screenshots`、番剧详情截图画廊、可复用 `Lightbox.astro` 点击放大（工具/番剧通用），后台表单同步 (completed 2026-07-16)
+- [x] **Phase 15: 客户端搜索与筛选** — 工具库/追番首页即时文本搜索（标题/描述/标签/分类/类型），零框架原生 `<script>` 过滤，无匹配空态 (SEARCH-01/02) (completed 2026-07-16)
 
 ## Phase Details
 
@@ -97,6 +111,14 @@
 | 5. 编辑已有条目 | v1.1 | 2/2 | Complete | 2026-07-16 |
 | 6. 新增条目 + frontmatter 生成 | v1.1 | 2/2 | Complete | 2026-07-16 |
 | 7. JSON 导出 + 端到端验证 | v1.1 | 1/1 | Complete | 2026-07-16 |
+| 8. 番剧类型（genre） | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 9. 工具分类完善 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 10. 追番统计 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 11. 内容流 RSS/时间线 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 12. Bangumi 集成 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 13. 图片功能（工具） | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 14. 图片功能（番剧）+ 灯箱 | v1.2 | 1/1 | Complete | 2026-07-16 |
+| 15. 客户端搜索与筛选 | v1.2 | 1/1 | Complete | 2026-07-16 |
 
 ## Coverage
 

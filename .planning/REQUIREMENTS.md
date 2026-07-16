@@ -32,28 +32,28 @@ v1.0 的 17 条需求（INFRA-01..07, TOOL-01..05, ANIME-01..05）已于 2026-07
 
 - [ ] **EDIT-08**: 编辑/新增结果可下载为 JSON 文件，格式完全匹配 content.config.ts schema；下载后放进 src/content/anime/ 或 src/content/tools/ 即可触发既有 git → Vercel 部署链路 — *Phase 7*
 
-## v1.2+ Requirements（已确认但推迟）
+## v1.2+ Requirements（已确认并交付）
 
 来自原 REQUIREMENTS.md v2 与 v1.1 范围之外的能力。
 
 ### 搜索与筛选增强 (Search)
 
-- **SEARCH-01**: 工具库客户端即时文本搜索（Fuse.js 或 Pagefind）
-- **SEARCH-02**: 分类 + 标签 + 搜索组合联动筛选
+- [x] **SEARCH-01**: 工具库客户端即时文本搜索（标题/描述/标签/分类）— *Phase 15*
+- [x] **SEARCH-02**: 追番首页即时搜索（番名/类型）；分类/标签静态页 + 搜索客户端联动 — *Phase 15*
 
 ### 内容流 (Feed)
 
-- **FEED-01**: RSS 订阅（新增工具 / 追番更新）
-- **FEED-02**: 「最近更新」/ 时间线视图
+- [x] **FEED-01**: RSS 订阅（新增工具 / 追番更新）— *Phase 11*
+- [x] **FEED-02**: 「最近更新」/ 时间线视图 — *Phase 11*
 
 ### 追番增强 (Stat)
 
-- **STAT-01**: 番剧统计概览（已看数 / 平均分等）
-- **STAT-02**: 番剧按年份 / 季度 / 类型聚合浏览
+- [x] **STAT-01**: 番剧统计概览（已看数 / 平均分等）— *Phase 10*
+- [x] **STAT-02**: 番剧按类型聚合浏览（genre 归档页）— *Phase 8*
 
 ### 外部集成 (API)
 
-- **API-01**: Bangumi API 自动拉取番剧封面与元数据
+- [x] **API-01**: Bangumi API 自动拉取番剧封面与元数据 — *Phase 12*
 
 ## Out of Scope
 
