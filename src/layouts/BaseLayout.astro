@@ -25,6 +25,7 @@ const og = new URL(ogImage ?? '/og-default.png', Astro.site);
       if (t === 'dark') document.documentElement.classList.add('dark');
     </script>
     <meta charset="utf-8" />
+    <slot name="head" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{fullTitle}</title>
