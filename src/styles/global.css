@@ -40,6 +40,7 @@
   --color-success: #34C77B;
   --color-destructive: #F26D6D;
   --color-deco-pink: #FF8FC7;
+  --color-star: #F5A524;
 
   /* 柔和青蓝染色阴影 */
   --shadow-soft: 0 6px 24px -8px rgba(23, 182, 214, 0.25);
@@ -60,6 +61,7 @@
   --color-success: #4BD68C;
   --color-destructive: #F58686;
   --color-deco-pink: #FF9ECF;
+  --color-star: #F5C266;
   /* 暗色降透明避免发灰 */
   --shadow-soft: 0 6px 24px -8px rgba(23, 182, 214, 0.15);
 }
@@ -122,4 +124,9 @@ body {
   }
   .prose :where(img,figure) { border-radius: var(--radius-lg); margin-block: 1em; }
   .prose :where(hr) { border: 0; border-block-start: 1px solid var(--color-border); margin-block: 2em; }
+
+  /* 评分 star 原子 class（star token + border 勾边，RatingStar 组件消费） */
+  .star-fill { color: var(--color-star); }
+  .star-empty { color: var(--color-border); }
+  .rating-num { color: var(--color-text-muted); font-size: 0.8125rem; }
 }
