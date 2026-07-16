@@ -1,5 +1,4 @@
 ---
-import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import StatusPill from './StatusPill.astro';
@@ -64,7 +63,7 @@ const hasImage = cover != null && cover !== '';
         />
       ) : (
         <div
-          class="grid h-full w-full place-items-center"
+          class="relative grid h-full w-full place-items-center"
           style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-deco-pink) 100%);"
           aria-hidden="true"
         >
