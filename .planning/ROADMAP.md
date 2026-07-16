@@ -28,7 +28,7 @@
 
 ### v1.1 — 内容编辑 UI
 
-- [ ] **Phase 4: Admin 外壳 + 密码守卫 + 条目浏览器** — 隐藏路由、前端密码门禁、经 lib/*.ts 加载现有条目列表供选择
+- [x] **Phase 4: Admin 外壳 + 密码守卫 + 条目浏览器** — 隐藏路由、前端密码门禁、经 lib/*.ts 加载现有条目列表供选择 (completed 2026-07-16)
 - [ ] **Phase 5: 编辑已有条目（追番 + 工具）** — 表单回填、校验、状态/进度/评分/短评/封面、名称/描述/链接/标签/分类/正文
 - [ ] **Phase 6: 新增条目 + frontmatter 生成** — 追番/新工具表单、必填校验、slug 派生、Zod schema 对齐的 frontmatter 自动产出
 - [ ] **Phase 7: JSON 导出 + 端到端验证** — schema 兼容 JSON 下载、放进 src/content/ 后 git → Vercel 链路不断
@@ -93,7 +93,7 @@
 | 1. 站点地基与二次元外壳 | v1.0 | 3/3 | Complete | 2026-07-15 |
 | 2. 工具库（核心） | v1.0 | 3/3 | Complete | 2026-07-15 |
 | 3. 追番记录 | v1.0 | 3/3 | Complete | 2026-07-16 |
-| 4. Admin 外壳 + 密码守卫 + 条目浏览器 | v1.1 | 0/? | Not started | - |
+| 4. Admin 外壳 + 密码守卫 + 条目浏览器 | v1.1 | 1/1 | Complete   | 2026-07-16 |
 | 5. 编辑已有条目 | v1.1 | 0/? | Not started | - |
 | 6. 新增条目 + frontmatter 生成 | v1.1 | 0/? | Not started | - |
 | 7. JSON 导出 + 端到端验证 | v1.1 | 0/? | Not started | - |
