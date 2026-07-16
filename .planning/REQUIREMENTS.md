@@ -14,8 +14,8 @@ v1.0 的 17 条需求（INFRA-01..07, TOOL-01..05, ANIME-01..05）已于 2026-07
 
 ### 访问控制 (Access)
 
-- [ ] **EDIT-01**: 用户在隐藏路由输入正确密码后可进入编辑界面；密码错误或未输入则留在入口页，不暴露任何编辑能力 — *Phase 4*
-- [ ] **EDIT-02**: 编辑界面加载时读取现有内容集合（经 lib/anime.ts / lib/tools.ts 收口），展示可编辑条目列表 — *Phase 4*
+- [x] **EDIT-01**: 用户在隐藏路由输入正确密码后可进入编辑界面；密码错误或未输入则留在入口页，不暴露任何编辑能力 — *Phase 4*
+- [x] **EDIT-02**: 编辑界面加载时读取现有内容集合（经 lib/anime.ts / lib/tools.ts 收口），展示可编辑条目列表 — *Phase 4*
 
 ### 内容编辑 (Edit)
 
@@ -74,8 +74,8 @@ v1.1 需求到 roadmap 阶段的映射。
 
  | Requirement | Phase | Status |
  |-------------|-------|--------|
- | EDIT-01 | Phase 4 | Pending |
- | EDIT-02 | Phase 4 | Pending |
+ | EDIT-01 | Phase 4 | Complete |
+ | EDIT-02 | Phase 4 | Complete |
  | EDIT-03 | Phase 5 | Pending |
  | EDIT-04 | Phase 5 | Pending |
  | EDIT-05 | Phase 6 | Pending |
