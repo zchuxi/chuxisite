@@ -45,6 +45,9 @@ const anime = defineCollection({
       myRating: z.number().min(0).max(10).optional(),
       progress: z.number().default(0),
       comment: z.string().optional(),
+      screenshots: z
+        .array(z.union([image(), z.string().url()]))
+        .default([]),
       draft: z.boolean().default(false),
     }),
 });

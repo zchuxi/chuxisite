@@ -109,6 +109,12 @@ const existingGenres = [...new Set(allAnime.flatMap((a) => a.data.genre))].sort(
         </div>
       </div>
 
+      <!-- screenshots -->
+      <div class="form-group">
+        <label for="field-screenshots" class="form-label">截图 URL（每行一个）</label>
+        <textarea id="field-screenshots" rows="3" placeholder="https://example.com/shot1.png&#10;https://example.com/shot2.png" class="form-textarea font-mono text-sm"></textarea>
+      </div>
+
       <!-- body -->
       <div class="form-group">
         <label for="field-body" class="form-label">正文（Markdown）</label>
@@ -162,6 +168,7 @@ const existingGenres = [...new Set(allAnime.flatMap((a) => a.data.genre))].sort(
     var ratingEl = document.getElementById('field-rating');
     var commentEl = document.getElementById('field-comment');
     var coverEl = document.getElementById('field-cover');
+    var screenshotsEl = document.getElementById('field-screenshots');
     var airdateEl = document.getElementById('field-airdate');
     var bodyEl = document.getElementById('field-body');
     var form = document.getElementById('new-form');
@@ -312,12 +319,15 @@ const existingGenres = [...new Set(allAnime.flatMap((a) => a.data.genre))].sort(
         cover: coverEl.value.trim() || undefined,
         airDate: airdateEl.value || undefined,
         genre: genres.length > 0 ? genres : undefined,
+        screenshots: screenshotsEl.value.split('\n').map((s) => s.trim()).filter(Boolean).length > 0
+          ? screenshotsEl.value.split('\n').map((s) => s.trim()).filter(Boolean)
+          : undefined,
         draft: false,
       };
 
       // 生成 YAML
       var yaml = '---\n';
-      var keys = ['titleCn', 'titleJa', 'status', 'progress', 'episodes', 'myRating', 'comment', 'cover', 'airDate', 'genre', 'draft'];
+      var keys = ['titleCn', 'titleJa', 'status', 'progress', 'episodes', 'myRating', 'comment', 'cover', 'airDate', 'genre', 'screenshots', 'draft'];
       for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
         var v = fields[k];

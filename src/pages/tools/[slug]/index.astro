@@ -5,6 +5,7 @@ import Footer from '../../../components/Footer.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import TagCloud from '../../../components/TagCloud.astro';
 import ToolDetailNav from '../../../components/ToolDetailNav.astro';
+import Lightbox from '../../../components/Lightbox.astro';
 import { Icon } from 'astro-icon/components';
 import { render } from 'astro:content';
 import { getAllTools, getRelated, slugOf } from '../../../lib/tools';
@@ -87,8 +88,9 @@ const hasCover = cover != null && cover !== '';
             <img
               src={typeof shot === 'string' ? shot : shot.src}
               alt={`${title} 截图`}
-              class="aspect-video w-full rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+              class="aspect-video w-full cursor-zoom-in rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover transition hover:opacity-90"
               loading="lazy"
+              data-lightbox
             />
           ))}
         </div>
@@ -107,5 +109,6 @@ const hasCover = cover != null && cover !== '';
       }))}
     />
   </main>
+  <Lightbox />
   <Footer />
 </BaseLayout>

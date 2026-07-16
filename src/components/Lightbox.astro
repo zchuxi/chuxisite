@@ -1,0 +1,46 @@
+---
+// 图片灯箱：监听所有 img[data-lightbox]，点击放大，再次点击/ESC 关闭。
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+  aria-hidden="true"
+>
+  <img id="lightbox-img" src="" alt="" class="max-h-[90vh] max-w-[90vw] rounded-[var(--radius-lg)] object-contain" />
+</div>
+
+<script is:inline>
+  (function() {
+    var box = document.getElementById('lightbox');
+    var img = document.getElementById('lightbox-img');
+    if (!box || !img) return;
+
+    function open(src, alt) {
+      img.src = src;
+      img.alt = alt || '';
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+      box.setAttribute('aria-hidden', 'false');
+    }
+
+    function close() {
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+      box.setAttribute('aria-hidden', 'true');
+      img.src = '';
+    }
+
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      if (target && target instanceof HTMLImageElement && target.hasAttribute('data-lightbox')) {
+        open(target.getAttribute('src') || '', target.getAttribute('alt') || '');
+      }
+    });
+
+    box.addEventListener('click', close);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>

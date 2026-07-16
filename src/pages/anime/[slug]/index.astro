@@ -7,6 +7,7 @@ import Footer from '../../../components/Footer.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import AnimeDetailHero from '../../../components/AnimeDetailHero.astro';
 import Star from '../../../components/deco/Star.astro';
+import Lightbox from '../../../components/Lightbox.astro';
 import Heart from '../../../components/deco/Heart.astro';
 import { render } from 'astro:content';
 import { getAllAnime } from '../../../lib/anime';
@@ -29,7 +30,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'anime'> };
 const { Content } = await render(entry);
-const { titleCn, titleJa, cover, status, myRating, progress, episodes, airDate, comment, genre } = entry.data;
+const { titleCn, titleJa, cover, status, myRating, progress, episodes, airDate, comment, genre, screenshots } = entry.data;
 
 // MDX body 为空的判定：entry.body（frontmatter 之外的原始 markdown）纯空白即视为无正文
 const mdxEmpty = !entry.body?.trim();
@@ -118,6 +119,24 @@ const description =
       </div>
     )}
 
+    {/* 截图画廊 */}
+    {screenshots.length > 0 && (
+      <section class="mt-8">
+        <h2 class="font-[family-name:var(--font-display)] text-xl font-semibold text-[var(--color-text)]">截图</h2>
+        <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
+          {screenshots.map((shot) => (
+            <img
+              src={typeof shot === 'string' ? shot : shot.src}
+              alt={`${titleCn} 截图`}
+              class="aspect-video w-full cursor-zoom-in rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover transition hover:opacity-90"
+              loading="lazy"
+              data-lightbox
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
     {/* MDX body（空则 fallback 文案） */}
     <div class="mt-12">
       {mdxEmpty ? (
@@ -139,6 +158,7 @@ const description =
       </a>
     </nav>
   </main>
+  <Lightbox />
   <div class="mt-24">
     <Footer />
   </div>
